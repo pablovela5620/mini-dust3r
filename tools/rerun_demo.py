@@ -16,7 +16,7 @@ def main(image_dir: Path):
         device = "cpu"
 
     model = AsymmetricCroCo3DStereo.from_pretrained(
-        "checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth"
+        "naver/DUSt3R_ViTLarge_BaseDecoder_512_dpt"
     ).to(device)
 
     optimized_results: OptimizedResult = inferece_dust3r(
