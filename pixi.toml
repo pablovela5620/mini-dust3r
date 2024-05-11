@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Add a short description here"
 authors = ["pablovela5620 <pablovela5620@gmail.com>"]
 channels = ["nvidia/label/cuda-11.8.0", "nvidia", "conda-forge", "pytorch"]
-platforms = ["linux-64"]
+platforms = ["linux-64", "osx-arm64"]
 
 [system-requirements]
 libc = { family="glibc", version="2.30" }
@@ -14,16 +14,13 @@ build-croco = { cmd = "python setup.py build_ext --inplace", cwd = "mini_dust3r/
 download-checkpoint = {cmd = "ls checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth || wget -P checkpoints/ https://download.europe.naverlabs.com/ComputerVision/DUSt3R/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth", outputs=["checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth"]}
 post-install = { cmd = "pwd", depends_on = ["download-checkpoint", "build-croco"]}
 demo = "python demo.py --weights checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth"
-
+rerun-demo = "PYTORCH_ENABLE_MPS_FALLBACK=1 pixi run python tools/rerun_demo.py"
 
 [dependencies]
 python = "3.11.*"
 pip = ">=23.3.2,<23.4"
-cuda = {version = "*", channel="nvidia/label/cuda-11.8.0"}
-pytorch-cuda = {version = "11.8.*", channel="pytorch"}
 pytorch = {version = ">=2.2.0,<2.3", channel="pytorch"}
 torchvision = {version = ">=0.17.0,<0.18", channel="pytorch"}
-cmake = "3.14.0.*"
 matplotlib = ">=3.8.3,<3.9"
 einops = ">=0.7.0,<0.8"
 tqdm = ">=4.66.2,<4.67"
@@ -34,6 +31,10 @@ pyglet = ">=1.5.27,<1.6"
 rerun-sdk = ">=0.14.1,<0.15"
 jaxtyping = ">=0.2.28,<0.3"
 gradio = ">=4.29.0,<4.30"
+
+[target.linux-64.dependencies]
+cuda = {version = "*", channel="nvidia/label/cuda-11.8.0"}
+pytorch-cuda = {version = "11.8.*", channel="pytorch"}
 
 [pypi-dependencies]
 roma = "*"
