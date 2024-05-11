@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "tools/rerun_demo.py", // Update the program attribute
+            "console": "integratedTerminal",
+            "args": [
+                "--headless",
+                "--connect",
+                "--image-dir",
+                "images-raw/"
+            ]
+        }
+    ]
+}

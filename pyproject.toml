@@ -1,0 +1,9 @@
+[project]
+name = "mini-dust3r"
+version = "0.1.0"
+
+dependencies=[
+]
+
+[tool.setuptools.packages.find]
+include = ["mini_dust3r*"]
