@@ -42,4 +42,5 @@ opencv-python = "*"
 mini-dust3r = { path = ".", editable = true}
 gradio-rerun = "*"
 open3d = "*"
+safetensors = "*"
 
