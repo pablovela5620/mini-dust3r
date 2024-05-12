@@ -5,7 +5,9 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "mini-dust3r"
 version = "0.1.0"
+description = "Miniature version of dust3r, focused on inference"
 requires-python = ">=3.10.0"
+license = "CC BY-NC-SA 4.0 DEED Attribution-NonCommercial-ShareAlike 4.0 International"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python",
