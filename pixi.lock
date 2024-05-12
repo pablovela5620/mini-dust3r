@@ -7146,27 +7146,6 @@ packages:
 - kind: pypi
   name: open3d
   version: 0.18.0
-  url: https://files.pythonhosted.org/packages/72/31/61ef4fdad29ca6031ecbccbb9c7a23a75f5bec66df79688a03e2765478b2/open3d-0.18.0-cp311-cp311-macosx_10_15_universal2.whl
-  sha256: b35a68b9fef3e963266db3bb15fbfef20e05787bc61192f61725fde5215f3560
-  requires_dist:
-  - numpy>=1.18.0
-  - dash>=2.6.0
-  - werkzeug>=2.2.3
-  - nbformat>=5.7.0
-  - configargparse
-  - addict
-  - pillow>=9.3.0
-  - matplotlib>=3
-  - numpy>1.18
-  - pandas>=1.0
-  - pyyaml>=5.4.1
-  - scikit-learn>=0.21
-  - tqdm
-  - pyquaternion
-  requires_python: '>=3.8'
-- kind: pypi
-  name: open3d
-  version: 0.18.0
   url: https://files.pythonhosted.org/packages/5c/ba/a4c5986951344f804b5cbd86f0a87d9ea5969e8d13f1e8913e2d8276e0d8/open3d-0.18.0-cp311-cp311-manylinux_2_27_x86_64.whl
   sha256: 8e3d1d1900a8f4d956f6819c246c78081725b9b0888f8549d2a7a49c8daa1303
   requires_dist:
@@ -7188,10 +7167,31 @@ packages:
   - pywinpty==2.0.2 ; sys_platform == 'win32' and python_version == '3.6'
   requires_python: '>=3.8'
 - kind: pypi
+  name: open3d
+  version: 0.18.0
+  url: https://files.pythonhosted.org/packages/72/31/61ef4fdad29ca6031ecbccbb9c7a23a75f5bec66df79688a03e2765478b2/open3d-0.18.0-cp311-cp311-macosx_10_15_universal2.whl
+  sha256: b35a68b9fef3e963266db3bb15fbfef20e05787bc61192f61725fde5215f3560
+  requires_dist:
+  - numpy>=1.18.0
+  - dash>=2.6.0
+  - werkzeug>=2.2.3
+  - nbformat>=5.7.0
+  - configargparse
+  - addict
+  - pillow>=9.3.0
+  - matplotlib>=3
+  - numpy>1.18
+  - pandas>=1.0
+  - pyyaml>=5.4.1
+  - scikit-learn>=0.21
+  - tqdm
+  - pyquaternion
+  requires_python: '>=3.8'
+- kind: pypi
   name: opencv-python
   version: 4.9.0.80
-  url: https://files.pythonhosted.org/packages/77/df/b56175c3fb5bc058774bdcf35f5a71cf9c3c5b909f98a1c688eb71cd3b1f/opencv_python-4.9.0.80-cp37-abi3-macosx_11_0_arm64.whl
-  sha256: 71dfb9555ccccdd77305fc3dcca5897fbf0cf28b297c51ee55e079c065d812a3
+  url: https://files.pythonhosted.org/packages/d9/64/7fdfb9386511cd6805451e012c537073a79a958a58795c4e602e538c388c/opencv_python-4.9.0.80-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  sha256: e4088cab82b66a3b37ffc452976b14a3c599269c247895ae9ceb4066d8188a57
   requires_dist:
   - numpy>=1.13.3 ; python_version < '3.7'
   - numpy>=1.21.0 ; python_version <= '3.9' and platform_system == 'Darwin' and platform_machine == 'arm64'
@@ -7207,8 +7207,8 @@ packages:
 - kind: pypi
   name: opencv-python
   version: 4.9.0.80
-  url: https://files.pythonhosted.org/packages/d9/64/7fdfb9386511cd6805451e012c537073a79a958a58795c4e602e538c388c/opencv_python-4.9.0.80-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  sha256: e4088cab82b66a3b37ffc452976b14a3c599269c247895ae9ceb4066d8188a57
+  url: https://files.pythonhosted.org/packages/77/df/b56175c3fb5bc058774bdcf35f5a71cf9c3c5b909f98a1c688eb71cd3b1f/opencv_python-4.9.0.80-cp37-abi3-macosx_11_0_arm64.whl
+  sha256: 71dfb9555ccccdd77305fc3dcca5897fbf0cf28b297c51ee55e079c065d812a3
   requires_dist:
   - numpy>=1.13.3 ; python_version < '3.7'
   - numpy>=1.21.0 ; python_version <= '3.9' and platform_system == 'Darwin' and platform_machine == 'arm64'
@@ -8766,46 +8766,6 @@ packages:
 - kind: pypi
   name: safetensors
   version: 0.4.3
-  url: https://files.pythonhosted.org/packages/82/61/d4812330b32600972e92ef09a59dc54f9ab8ae570fdca28d8bdfc5577756/safetensors-0.4.3-cp311-cp311-macosx_11_0_arm64.whl
-  sha256: 7c4fa560ebd4522adddb71dcd25d09bf211b5634003f015a4b815b7647d62ebe
-  requires_dist:
-  - numpy>=1.21.6 ; extra == 'numpy'
-  - safetensors[numpy] ; extra == 'torch'
-  - torch>=1.10 ; extra == 'torch'
-  - safetensors[numpy] ; extra == 'tensorflow'
-  - tensorflow>=2.11.0 ; extra == 'tensorflow'
-  - safetensors[numpy] ; extra == 'pinned-tf'
-  - tensorflow==2.11.0 ; extra == 'pinned-tf'
-  - safetensors[numpy] ; extra == 'jax'
-  - flax>=0.6.3 ; extra == 'jax'
-  - jax>=0.3.25 ; extra == 'jax'
-  - jaxlib>=0.3.25 ; extra == 'jax'
-  - mlx>=0.0.9 ; extra == 'mlx'
-  - safetensors[numpy] ; extra == 'paddlepaddle'
-  - paddlepaddle>=2.4.1 ; extra == 'paddlepaddle'
-  - black==22.3 ; extra == 'quality'
-  - click==8.0.4 ; extra == 'quality'
-  - isort>=5.5.4 ; extra == 'quality'
-  - flake8>=3.8.3 ; extra == 'quality'
-  - safetensors[numpy] ; extra == 'testing'
-  - h5py>=3.7.0 ; extra == 'testing'
-  - huggingface-hub>=0.12.1 ; extra == 'testing'
-  - setuptools-rust>=1.5.2 ; extra == 'testing'
-  - pytest>=7.2.0 ; extra == 'testing'
-  - pytest-benchmark>=4.0.0 ; extra == 'testing'
-  - hypothesis>=6.70.2 ; extra == 'testing'
-  - safetensors[torch] ; extra == 'all'
-  - safetensors[numpy] ; extra == 'all'
-  - safetensors[pinned-tf] ; extra == 'all'
-  - safetensors[jax] ; extra == 'all'
-  - safetensors[paddlepaddle] ; extra == 'all'
-  - safetensors[quality] ; extra == 'all'
-  - safetensors[testing] ; extra == 'all'
-  - safetensors[all] ; extra == 'dev'
-  requires_python: '>=3.7'
-- kind: pypi
-  name: safetensors
-  version: 0.4.3
   url: https://files.pythonhosted.org/packages/d5/85/1e7d2804cbf82204cde462d16f1cb0ff5814b03f559fb46ceaa6b7020db4/safetensors-0.4.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
   sha256: 0bf4f9d6323d9f86eef5567eabd88f070691cf031d4c0df27a40d3b4aaee755b
   requires_dist:
@@ -8844,10 +8804,50 @@ packages:
   - safetensors[all] ; extra == 'dev'
   requires_python: '>=3.7'
 - kind: pypi
+  name: safetensors
+  version: 0.4.3
+  url: https://files.pythonhosted.org/packages/82/61/d4812330b32600972e92ef09a59dc54f9ab8ae570fdca28d8bdfc5577756/safetensors-0.4.3-cp311-cp311-macosx_11_0_arm64.whl
+  sha256: 7c4fa560ebd4522adddb71dcd25d09bf211b5634003f015a4b815b7647d62ebe
+  requires_dist:
+  - numpy>=1.21.6 ; extra == 'numpy'
+  - safetensors[numpy] ; extra == 'torch'
+  - torch>=1.10 ; extra == 'torch'
+  - safetensors[numpy] ; extra == 'tensorflow'
+  - tensorflow>=2.11.0 ; extra == 'tensorflow'
+  - safetensors[numpy] ; extra == 'pinned-tf'
+  - tensorflow==2.11.0 ; extra == 'pinned-tf'
+  - safetensors[numpy] ; extra == 'jax'
+  - flax>=0.6.3 ; extra == 'jax'
+  - jax>=0.3.25 ; extra == 'jax'
+  - jaxlib>=0.3.25 ; extra == 'jax'
+  - mlx>=0.0.9 ; extra == 'mlx'
+  - safetensors[numpy] ; extra == 'paddlepaddle'
+  - paddlepaddle>=2.4.1 ; extra == 'paddlepaddle'
+  - black==22.3 ; extra == 'quality'
+  - click==8.0.4 ; extra == 'quality'
+  - isort>=5.5.4 ; extra == 'quality'
+  - flake8>=3.8.3 ; extra == 'quality'
+  - safetensors[numpy] ; extra == 'testing'
+  - h5py>=3.7.0 ; extra == 'testing'
+  - huggingface-hub>=0.12.1 ; extra == 'testing'
+  - setuptools-rust>=1.5.2 ; extra == 'testing'
+  - pytest>=7.2.0 ; extra == 'testing'
+  - pytest-benchmark>=4.0.0 ; extra == 'testing'
+  - hypothesis>=6.70.2 ; extra == 'testing'
+  - safetensors[torch] ; extra == 'all'
+  - safetensors[numpy] ; extra == 'all'
+  - safetensors[pinned-tf] ; extra == 'all'
+  - safetensors[jax] ; extra == 'all'
+  - safetensors[paddlepaddle] ; extra == 'all'
+  - safetensors[quality] ; extra == 'all'
+  - safetensors[testing] ; extra == 'all'
+  - safetensors[all] ; extra == 'dev'
+  requires_python: '>=3.7'
+- kind: pypi
   name: scikit-learn
   version: 1.4.2
-  url: https://files.pythonhosted.org/packages/ef/e5/c09d20723bfd91315f6f4ddc77912b0dcc09588b4ca7ad2ffa204607ad7f/scikit-learn-1.4.2.tar.gz
-  sha256: daa1c471d95bad080c6e44b4946c9390a4842adc3082572c20e4f8884e39e959
+  url: https://files.pythonhosted.org/packages/4e/53/14405a47292b59235d811a2af8634aba188ccfd1a38ef4b8042f3447d79a/scikit_learn-1.4.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  sha256: 44c62f2b124848a28fd695db5bc4da019287abf390bfce602ddc8aa1ec186aae
   requires_dist:
   - numpy>=1.19.5
   - scipy>=1.6.0
@@ -8893,8 +8893,8 @@ packages:
 - kind: pypi
   name: scikit-learn
   version: 1.4.2
-  url: https://files.pythonhosted.org/packages/4e/53/14405a47292b59235d811a2af8634aba188ccfd1a38ef4b8042f3447d79a/scikit_learn-1.4.2-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  sha256: 44c62f2b124848a28fd695db5bc4da019287abf390bfce602ddc8aa1ec186aae
+  url: https://files.pythonhosted.org/packages/ef/e5/c09d20723bfd91315f6f4ddc77912b0dcc09588b4ca7ad2ffa204607ad7f/scikit-learn-1.4.2.tar.gz
+  sha256: daa1c471d95bad080c6e44b4946c9390a4842adc3082572c20e4f8884e39e959
   requires_dist:
   - numpy>=1.19.5
   - scipy>=1.6.0
