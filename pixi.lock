@@ -114,7 +114,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/glib-tools-2.80.2-hb6ce0ca_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/glog-0.7.0-hed5481d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/gmp-6.3.0-h59595ed_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/linux-64/gmpy2-2.1.5-py311he48d604_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/gmpy2-2.1.5-py311hc4f1f91_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/gnutls-3.7.9-hb077bed_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gradio-4.29.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gradio-client-0.16.1-pyhd8ed1ab_0.conda
@@ -303,7 +303,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/readline-8.2-h8228510_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/referencing-0.35.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/requests-2.31.0-pyhd8ed1ab_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/linux-64/rerun-sdk-0.14.1-py311h7145743_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/linux-64/rerun-sdk-0.15.1-py311h7145743_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/rich-13.7.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/rpds-py-0.18.1-py311h5ecf98a_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/ruff-0.4.4-py311hae69bc3_0.conda
@@ -480,7 +480,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/gflags-2.2.2-hc88da5d_1004.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/glog-0.7.0-hc6770e3_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/gmp-6.3.0-hebf3989_1.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/gmpy2-2.1.5-py311hcabc2c5_0.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/gmpy2-2.1.5-py311h1e33d93_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/gnutls-3.7.9-hd26332c_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gradio-4.29.0-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/gradio-client-0.16.1-pyhd8ed1ab_0.conda
@@ -615,7 +615,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/readline-8.2-h92ec313_1.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/referencing-0.35.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/requests-2.31.0-pyhd8ed1ab_0.conda
-      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/rerun-sdk-0.14.1-py311h9491809_1.conda
+      - conda: https://conda.anaconda.org/conda-forge/osx-arm64/rerun-sdk-0.15.1-py311h9491809_0.conda
       - conda: https://conda.anaconda.org/conda-forge/noarch/rich-13.7.1-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/rpds-py-0.18.1-py311h98c6a39_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/ruff-0.4.4-py311hd374d79_0.conda
@@ -3126,12 +3126,14 @@ packages:
 - kind: conda
   name: gmpy2
   version: 2.1.5
-  build: py311hcabc2c5_0
+  build: py311h1e33d93_1
+  build_number: 1
   subdir: osx-arm64
-  url: https://conda.anaconda.org/conda-forge/osx-arm64/gmpy2-2.1.5-py311hcabc2c5_0.conda
-  sha256: 776527cd4517a1003648eb1f7b9dc1fc5109ce7e4a4b4f65174e8e86bf1ddcca
-  md5: 5603b67f80db5a32c1ffdc81ea09c802
+  url: https://conda.anaconda.org/conda-forge/osx-arm64/gmpy2-2.1.5-py311h1e33d93_1.conda
+  sha256: 047dd4dd8255fea1cf3c0629e5cfcb3a1602c18ab46fa0e16b615b669b9f8efe
+  md5: 7d974c438b0940fbf837ddca56231679
   depends:
+  - __osx >=11.0
   - gmp >=6.3.0,<7.0a0
   - mpc >=1.3.1,<2.0a0
   - mpfr >=4.2.1,<5.0a0
@@ -3139,19 +3141,19 @@ packages:
   - python >=3.11,<3.12.0a0 *_cpython
   - python_abi 3.11.* *_cp311
   license: LGPL-3.0-or-later
-  license_family: LGPL
   purls:
   - pkg:pypi/gmpy2
-  size: 145966
-  timestamp: 1713794932536
+  size: 147863
+  timestamp: 1715527598324
 - kind: conda
   name: gmpy2
   version: 2.1.5
-  build: py311he48d604_0
+  build: py311hc4f1f91_1
+  build_number: 1
   subdir: linux-64
-  url: https://conda.anaconda.org/conda-forge/linux-64/gmpy2-2.1.5-py311he48d604_0.conda
-  sha256: d3f8988811d2b0d7904603f07687f3f79747db5271e56b788eab5f36d56346bd
-  md5: 653ff815c53880a870ec03fb1cae0f94
+  url: https://conda.anaconda.org/conda-forge/linux-64/gmpy2-2.1.5-py311hc4f1f91_1.conda
+  sha256: a174e05ee2531bd81f275bd01557c907faa1d794e68b7c1e73b1d9e7e8f42732
+  md5: 30b83b4a5d116d790f8da79a4acac238
   depends:
   - gmp >=6.3.0,<7.0a0
   - libgcc-ng >=12
@@ -3160,11 +3162,10 @@ packages:
   - python >=3.11,<3.12.0a0
   - python_abi 3.11.* *_cp311
   license: LGPL-3.0-or-later
-  license_family: LGPL
   purls:
   - pkg:pypi/gmpy2
-  size: 203372
-  timestamp: 1713794545811
+  size: 204853
+  timestamp: 1715527414809
 - kind: conda
   name: gnutls
   version: 3.7.9
@@ -6763,7 +6764,26 @@ packages:
   name: mini-dust3r
   version: 0.1.0
   path: .
-  sha256: 35d1f0cf4a04da1c1799ba67408873af48cd786db2f78a701c09a37ccc23a6e2
+  sha256: 4a4a19c83b5074579e395166169707d4d05b66deba4a0c60df9b8694494d494e
+  requires_dist:
+  - roma>=1.5
+  - opencv-python>=4.9.0.80
+  - gradio-rerun>=0.0.1
+  - open3d>=0.18.0
+  - safetensors>=0.4.3
+  - torch>=2.0.0
+  - torchvision>=0.15.0
+  - matplotlib>=3.8.4
+  - einops>=0.7.0
+  - tqdm>=4.66.4
+  - scipy>=1.12.0
+  - trimesh>=4.2.0
+  - tensorboard>=2.16.2
+  - pyglet>=1.5.27
+  - jaxtyping>=0.2.28
+  - gradio>=4.29.0
+  - rerun-sdk>=0.15.1
+  requires_python: '>=3.10.0'
   editable: true
 - kind: conda
   name: mkl
@@ -8570,13 +8590,12 @@ packages:
   timestamp: 1684774408600
 - kind: conda
   name: rerun-sdk
-  version: 0.14.1
-  build: py311h7145743_1
-  build_number: 1
+  version: 0.15.1
+  build: py311h7145743_0
   subdir: linux-64
-  url: https://conda.anaconda.org/conda-forge/linux-64/rerun-sdk-0.14.1-py311h7145743_1.conda
-  sha256: 3d8c3632f0fd0899b1d91b82ae8128b744456ff4478b9f4bddb60adc39d53c37
-  md5: bb530799f4c6542b39ebab3b71b3b221
+  url: https://conda.anaconda.org/conda-forge/linux-64/rerun-sdk-0.15.1-py311h7145743_0.conda
+  sha256: 383d56af5fb061cbaa1693b10c5261aa23b6ed339926a2237b196e0e1d09eea6
+  md5: 608c51752ecaa4c6f67f74ade57bfe54
   depends:
   - attrs >=23.1.0
   - libgcc-ng >=12
@@ -8590,17 +8609,16 @@ packages:
   license: MIT OR Apache-2.0
   purls:
   - pkg:pypi/rerun-sdk
-  size: 17336804
-  timestamp: 1711041928569
+  size: 17742278
+  timestamp: 1712877745273
 - kind: conda
   name: rerun-sdk
-  version: 0.14.1
-  build: py311h9491809_1
-  build_number: 1
+  version: 0.15.1
+  build: py311h9491809_0
   subdir: osx-arm64
-  url: https://conda.anaconda.org/conda-forge/osx-arm64/rerun-sdk-0.14.1-py311h9491809_1.conda
-  sha256: 07359a1355a69dfa6d0c9837741c0dd526af75c7a3b257effde7a91cc0444f5d
-  md5: e2860a6907712989ff603e8c1d499f48
+  url: https://conda.anaconda.org/conda-forge/osx-arm64/rerun-sdk-0.15.1-py311h9491809_0.conda
+  sha256: 8cc9294187955c7a13b2790e6c35aa99a554601cff0be8f94583c8dea457cc05
+  md5: bb36c16da5f0341d74ad4ac43e30d63e
   depends:
   - __osx >=11.0
   - attrs >=23.1.0
@@ -8615,8 +8633,8 @@ packages:
   license: MIT OR Apache-2.0
   purls:
   - pkg:pypi/rerun-sdk
-  size: 13452205
-  timestamp: 1711044288820
+  size: 13873131
+  timestamp: 1712879541036
 - kind: pypi
   name: retrying
   version: 1.3.4
