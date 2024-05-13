@@ -20,7 +20,7 @@ def main(image_dir: Path):
     ).to(device)
 
     optimized_results: OptimizedResult = inferece_dust3r(
-        image_dir=image_dir,
+        image_dir_or_list=image_dir,
         model=model,
         device=device,
         batch_size=1,
