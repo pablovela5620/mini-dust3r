@@ -15,7 +15,7 @@ pip install mini-dust3r
 ## Demo
 A hosted demo can be found on huggingface here <a href='https://huggingface.co/spaces/pablovela5620/mini-dust3r'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue'></a>
 
-or from source using [Pixi](pixi.sh)
+or from source using [Pixi](http://pixi.sh)
 
 ``` bash
 git clone https://github.com/pablovela5620/mini-dust3r.git
