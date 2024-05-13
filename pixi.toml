@@ -14,8 +14,11 @@ build-croco = { cmd = "python setup.py build_ext --inplace", cwd = "mini_dust3r/
 download-checkpoint = {cmd = "ls checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth || wget -P checkpoints/ https://download.europe.naverlabs.com/ComputerVision/DUSt3R/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth", outputs=["checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth"]}
 post-install = { cmd = "pwd", depends_on = ["download-checkpoint", "build-croco"]}
 
-demo = "python demo.py --weights checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth"
-rerun-demo = "PYTORCH_ENABLE_MPS_FALLBACK=1 pixi run python tools/rerun_demo.py"
+rerun-demo = "PYTORCH_ENABLE_MPS_FALLBACK=1 python tools/rerun_demo.py"
+gradio-demo = "python tools/app.py"
+
+dev-install = "python -m pip install build twine"
+build-wheel = { cmd = "python -m build", depends_on = ["dev-install"]}
 
 [dependencies]
 python = "3.11.*"
