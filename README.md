@@ -12,10 +12,18 @@ Easily installable via pip
 pip install mini-dust3r
 ```
 
+## Demo
+A hosted demo can be found on huggingface here <a href='https://huggingface.co/spaces/pablovela5620/mini-dust3r'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Spaces-blue'></a>
+
 or from source using [Pixi](pixi.sh)
 
 ``` bash
 git clone https://github.com/pablovela5620/mini-dust3r.git
+pixi run gradio-demo
+```
+
+You can also just use rerun demo directly with
+```bash
 pixi run rerun-demo
 ```
 
@@ -67,6 +75,32 @@ if __name__ == "__main__":
     main(args.image_dir)
     rr.script_teardown(args)
 ```
+
+## Inputs and Outputs
+
+Inference Fuction
+
+```python
+def inferece_dust3r(
+    image_dir_or_list: Path | list[Path],
+    model: AsymmetricCroCo3DStereo,
+    device: Literal["cpu", "cuda", "mps"],
+    batch_size: int = 1,
+    image_size: Literal[224, 512] = 512,
+    niter: int = 100,
+    schedule: Literal["linear", "cosine"] = "linear",
+    min_conf_thr: float = 10,
+) -> OptimizedResult:
+```
+Which consists of
+* image_dir_or_list - Path to the directory containing images or a list of image paths
+* model - The Dust3r model to use for inference
+* device - device to use for inference ("cpu", "cuda", or "mps")
+* batch_size - The batch size for inference. Defaults to 1.
+* image_size - The size of the input images. Defaults to 512.
+* niter - The number of iterations for the global alignment optimization. Defaults to 100.
+* schedule - The learning rate schedule for the global alignment optimization. Defaults to "linear"
+* min_conf_thr - The minimum confidence threshold for the optimized result. Defaults to 10.
 
 The output from OptimizedResult looks like the following
 

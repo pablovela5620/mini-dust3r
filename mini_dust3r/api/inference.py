@@ -164,6 +164,25 @@ def inferece_dust3r(
     schedule: Literal["linear", "cosine"] = "linear",
     min_conf_thr: float = 10,
 ) -> OptimizedResult:
+    """
+    Perform inference using the Dust3r algorithm.
+
+    Args:
+        image_dir_or_list (Union[Path, List[Path]]): Path to the directory containing images or a list of image paths.
+        model (AsymmetricCroCo3DStereo): The Dust3r model to use for inference.
+        device (Literal["cpu", "cuda", "mps"]): The device to use for inference ("cpu", "cuda", or "mps").
+        batch_size (int, optional): The batch size for inference. Defaults to 1.
+        image_size (Literal[224, 512], optional): The size of the input images. Defaults to 512.
+        niter (int, optional): The number of iterations for the global alignment optimization. Defaults to 100.
+        schedule (Literal["linear", "cosine"], optional): The learning rate schedule for the global alignment optimization. Defaults to "linear".
+        min_conf_thr (float, optional): The minimum confidence threshold for the optimized result. Defaults to 10.
+
+    Returns:
+        OptimizedResult: The optimized result containing the RGB, depth, and confidence images.
+
+    Raises:
+        ValueError: If `image_dir_or_list` is neither a list of paths nor a path.
+    """
     if isinstance(image_dir_or_list, list):
         imgs: list[ImageDict] = load_images(
             folder_or_list=image_dir_or_list, size=image_size, verbose=True
@@ -174,6 +193,7 @@ def inferece_dust3r(
         )
     else:
         raise ValueError("image_dir_or_list should be a list of paths or a path")
+
     # if only one image was loaded, duplicate it to feed into stereo network
     if len(imgs) == 1:
         imgs = [imgs[0], copy.deepcopy(imgs[0])]
@@ -200,8 +220,6 @@ def inferece_dust3r(
             init="mst", niter=niter, schedule=schedule, lr=lr
         )
 
-    # also return rgb, depth and confidence imgs
-    # depth is normalized with the max value for all images
-    # we apply the jet colormap on the confidence maps
+    # get the optimized result from the scene
     optimized_result: OptimizedResult = scene_to_results(scene, min_conf_thr)
     return optimized_result
