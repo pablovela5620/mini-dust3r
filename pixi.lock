@@ -6762,9 +6762,9 @@ packages:
   timestamp: 1704317789138
 - kind: pypi
   name: mini-dust3r
-  version: 0.1.0
+  version: 0.1.1
   path: .
-  sha256: 3ebba8692d01a26da47d113e7c64d34f71417642e808aa130227d94df56ce299
+  sha256: 1145b78f502809a753bd152e64daf1c040716fd041868f60e3cc89cc810388ec
   requires_dist:
   - roma>=1.5
   - opencv-python>=4.9.0.80
