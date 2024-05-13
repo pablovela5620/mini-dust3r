@@ -1,6 +1,6 @@
 # Mini-Dust3r
 A miniature version of [dust3r](https://github.com/naver/dust3r) only for performing inference.
-This makes it much easier to use without needing the training/data/eval code.
+This makes it much easier to use without needing the training/data/eval code. Tested on Linux and Apple Silicon Macs
 <p align="center">
   <img src="media/mini-dust3r.gif" alt="example output" width="720" />
 </p>
@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
 ## Inputs and Outputs
 
-Inference Fuction
+### Inference Fuction
 
 ```python
 def inferece_dust3r(
@@ -92,7 +92,7 @@ def inferece_dust3r(
     min_conf_thr: float = 10,
 ) -> OptimizedResult:
 ```
-Which consists of
+Consists of
 * image_dir_or_list - Path to the directory containing images or a list of image paths
 * model - The Dust3r model to use for inference
 * device - device to use for inference ("cpu", "cuda", or "mps")
@@ -102,7 +102,7 @@ Which consists of
 * schedule - The learning rate schedule for the global alignment optimization. Defaults to "linear"
 * min_conf_thr - The minimum confidence threshold for the optimized result. Defaults to 10.
 
-The output from OptimizedResult looks like the following
+### Output from OptimizedResult
 
 ```python
 @dataclass
@@ -116,7 +116,7 @@ class OptimizedResult:
     point_cloud: trimesh.PointCloud
     mesh: trimesh.Trimesh
 ```
-Which consists of
+Consists of
 * K_b33 - camera intrinsics of shape (b33)
 * world_T_cam_b44 - camera to world transformation matrix of shape b44
      in OpenCV convention X - Right Y - Down Z - Forward (RDF)
