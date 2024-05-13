@@ -6764,7 +6764,7 @@ packages:
   name: mini-dust3r
   version: 0.1.0
   path: .
-  sha256: 4a4a19c83b5074579e395166169707d4d05b66deba4a0c60df9b8694494d494e
+  sha256: 3ebba8692d01a26da47d113e7c64d34f71417642e808aa130227d94df56ce299
   requires_dist:
   - roma>=1.5
   - opencv-python>=4.9.0.80
