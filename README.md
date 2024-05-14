@@ -129,5 +129,5 @@ Consists of
 
 ## References
 Full credit goes the Naver for their great work on
-* [Dust3r](https://github.com/naver/croco)
+* [Dust3r](https://github.com/naver/dust3r)
 * [Croco](https://github.com/naver/croco)

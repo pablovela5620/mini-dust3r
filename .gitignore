@@ -167,4 +167,5 @@ cython_debug/
 
 data/
 checkpoints/
-
+examples/
+gradio_cached_examples/
