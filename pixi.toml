@@ -4,7 +4,7 @@ version = "0.1.1"
 description = "Add a short description here"
 authors = ["pablovela5620 <pablovela5620@gmail.com>"]
 channels = ["nvidia/label/cuda-11.8.0", "nvidia", "conda-forge", "pytorch"]
-platforms = ["linux-64", "osx-arm64"]
+platforms = ["linux-64", "osx-arm64", "win-64"]
 
 [system-requirements]
 libc = { family="glibc", version="2.31" }
