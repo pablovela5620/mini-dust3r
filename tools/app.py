@@ -58,7 +58,8 @@ def predict(image_name_list: list[str] | str):
             f"Input must be a list of strings or a string, got: {type(image_name_list)}"
         )
     uuid_str = str(uuid.uuid4())
-    filename = Path(f"/tmp/gradio/{uuid_str}.rrd")
+    filename = Path("tmp/gradio") / f"{uuid_str}.rrd"
+    filename.parent.mkdir(parents=True,exist_ok=True)
     rr.init(f"{uuid_str}")
     log_path = Path("world")
 
