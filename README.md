@@ -1,6 +1,6 @@
 # Mini-Dust3r
 A miniature version of [dust3r](https://github.com/naver/dust3r) only for performing inference.
-This makes it much easier to use without needing the training/data/eval code. Tested on Linux and Apple Silicon Macs
+This makes it much easier to use without needing the training/data/eval code. Tested on Linux, Apple Silicon Macs, and Windows (Thanks @Vincentqyw)
 <p align="center">
   <img src="media/mini-dust3r.gif" alt="example output" width="720" />
 </p>
