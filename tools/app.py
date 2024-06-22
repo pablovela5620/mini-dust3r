@@ -13,7 +13,7 @@ from mini_dust3r.model import AsymmetricCroCo3DStereo
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 model = AsymmetricCroCo3DStereo.from_pretrained(
-    "naver/DUSt3R_ViTLarge_BaseDecoder_512_dpt"
+    "nielsr/DUSt3R_ViTLarge_BaseDecoder_512_dpt"
 ).to(DEVICE)
 
 
@@ -59,7 +59,7 @@ def predict(image_name_list: list[str] | str):
         )
     uuid_str = str(uuid.uuid4())
     filename = Path("tmp/gradio") / f"{uuid_str}.rrd"
-    filename.parent.mkdir(parents=True,exist_ok=True)
+    filename.parent.mkdir(parents=True, exist_ok=True)
     rr.init(f"{uuid_str}")
     log_path = Path("world")
 
