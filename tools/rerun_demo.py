@@ -59,8 +59,8 @@ def main(image_dir: Path):
         device=device,
         batch_size=1,
     )
-    blueprint = create_blueprint(image_dir, "world")
-    rr.send_blueprint(blueprint)
+    # blueprint = create_blueprint(image_dir, "world")
+    # rr.send_blueprint(blueprint)
     log_optimized_result(optimized_results, Path("world"))
 
 

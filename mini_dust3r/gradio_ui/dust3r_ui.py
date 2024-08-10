@@ -11,13 +11,10 @@ import uuid
 from mini_dust3r.api import OptimizedResult, inferece_dust3r, log_optimized_result
 from mini_dust3r.model import AsymmetricCroCo3DStereo
 
-if gr.NO_RELOAD:
-    DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-    model = AsymmetricCroCo3DStereo.from_pretrained(
-        "nielsr/DUSt3R_ViTLarge_BaseDecoder_512_dpt"
-    ).to(DEVICE)
-
-print("** STARTING GRADIO APP **")
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+model = AsymmetricCroCo3DStereo.from_pretrained(
+    "nielsr/DUSt3R_ViTLarge_BaseDecoder_512_dpt"
+).to(DEVICE)
 
 
 def create_blueprint(image_name_list: list[str], log_path: Path) -> rrb.Blueprint:

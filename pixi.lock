@@ -34,6 +34,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/aws-checksums-0.1.18-h83b837d_6.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/aws-crt-cpp-0.26.12-h8bc9c4d_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/aws-sdk-cpp-1.11.329-hf74b5d1_5.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/beartype-0.18.5-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/blas-1.0-mkl.tar.bz2
       - conda: https://conda.anaconda.org/conda-forge/linux-64/brotli-1.1.0-hd590300_1.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/brotli-bin-1.1.0-hd590300_1.conda
@@ -454,6 +455,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/aws-checksums-0.1.18-h5db4892_6.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/aws-crt-cpp-0.26.12-h9d69022_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/aws-sdk-cpp-1.11.329-h6bd5272_5.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/beartype-0.18.5-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/brotli-1.1.0-hb547adb_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/brotli-bin-1.1.0-hb547adb_1.conda
       - conda: https://conda.anaconda.org/conda-forge/osx-arm64/brotli-python-1.1.0-py311ha891d26_1.conda
@@ -728,6 +730,7 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/win-64/aws-checksums-0.1.18-h750c3ff_6.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/aws-crt-cpp-0.26.12-h819e545_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/aws-sdk-cpp-1.11.329-hab43c70_5.conda
+      - conda: https://conda.anaconda.org/conda-forge/noarch/beartype-0.18.5-pyhd8ed1ab_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/blas-2.122-mkl.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/blas-devel-3.9.0-22_win64_mkl.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/brotli-1.1.0-hcfcfb64_1.conda
@@ -2040,6 +2043,23 @@ packages:
   purls: []
   size: 3626304
   timestamp: 1718313311490
+- kind: conda
+  name: beartype
+  version: 0.18.5
+  build: pyhd8ed1ab_0
+  subdir: noarch
+  noarch: python
+  url: https://conda.anaconda.org/conda-forge/noarch/beartype-0.18.5-pyhd8ed1ab_0.conda
+  sha256: b68b7db7b849d999c5cc97b831e06a490c3dcb64aad84367c0969139a7a8f844
+  md5: 28786996506a2f2dd7819b5f3705f4e4
+  depends:
+  - python >=3.8
+  license: MIT
+  license_family: MIT
+  purls:
+  - pkg:pypi/beartype?source=conda-forge-mapping
+  size: 766954
+  timestamp: 1713735111213
 - kind: conda
   name: blas
   version: '1.0'
@@ -4819,8 +4839,8 @@ packages:
 - kind: pypi
   name: hf-transfer
   version: 0.1.6
-  url: https://files.pythonhosted.org/packages/09/a3/4873d5ab1443dd0aa17250050f2e03124b62815712a251955e992919a4c0/hf_transfer-0.1.6-cp311-none-win_amd64.whl
-  sha256: fa475175c51451186bea804471995fa8e7b2a48a61dcca55534911dc25955527
+  url: https://files.pythonhosted.org/packages/fa/92/4419c2faabb720f25f339a25f0c6e77412b6efbe3152c4e0bcfb436c3192/hf_transfer-0.1.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  sha256: 4282f09902114cd67fca98a1a1bad569a44521a8395fedf327e966714f68b977
   requires_python: '>=3.7'
 - kind: pypi
   name: hf-transfer
@@ -4831,8 +4851,8 @@ packages:
 - kind: pypi
   name: hf-transfer
   version: 0.1.6
-  url: https://files.pythonhosted.org/packages/fa/92/4419c2faabb720f25f339a25f0c6e77412b6efbe3152c4e0bcfb436c3192/hf_transfer-0.1.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  sha256: 4282f09902114cd67fca98a1a1bad569a44521a8395fedf327e966714f68b977
+  url: https://files.pythonhosted.org/packages/09/a3/4873d5ab1443dd0aa17250050f2e03124b62815712a251955e992919a4c0/hf_transfer-0.1.6-cp311-none-win_amd64.whl
+  sha256: fa475175c51451186bea804471995fa8e7b2a48a61dcca55534911dc25955527
   requires_python: '>=3.7'
 - kind: conda
   name: hpack
@@ -9653,7 +9673,7 @@ packages:
   name: mini-dust3r
   version: 0.1.1
   path: .
-  sha256: 9885eb727de854e187bc38b4471da4d36b49a7f8a3198f1a5268ad322b61d080
+  sha256: 4a720447204905c3597d14816f37d91606d1b861a427a1ae9611d99cdb486f9a
   requires_dist:
   - torch>=2.2.0,<2.3
   - torchvision>=0.17.0,<0.18
@@ -9667,6 +9687,7 @@ packages:
   - jaxtyping>=0.2.28
   - gradio>=4.29.0
   - rerun-sdk>=0.15.1
+  - beartype>=0.18.5
   - roma>=1.5
   - opencv-python>=4.9.0.80
   - gradio-rerun>=0.0.1
@@ -10217,8 +10238,8 @@ packages:
 - kind: pypi
   name: open3d
   version: 0.18.0
-  url: https://files.pythonhosted.org/packages/43/ee/1c0f25a57b43849fb9f1e773e5c065aa3363b49313bdbdfb7b35337bbab3/open3d-0.18.0-cp311-cp311-win_amd64.whl
-  sha256: 2da5da6c9eb9227baee6fe98baa992233aca36b83ec9e7d4093c77e762db60e6
+  url: https://files.pythonhosted.org/packages/5c/ba/a4c5986951344f804b5cbd86f0a87d9ea5969e8d13f1e8913e2d8276e0d8/open3d-0.18.0-cp311-cp311-manylinux_2_27_x86_64.whl
+  sha256: 8e3d1d1900a8f4d956f6819c246c78081725b9b0888f8549d2a7a49c8daa1303
   requires_dist:
   - numpy>=1.18.0
   - dash>=2.6.0
@@ -10226,6 +10247,15 @@ packages:
   - nbformat>=5.7.0
   - configargparse
   - ipywidgets>=8.0.4
+  - addict
+  - pillow>=9.3.0
+  - matplotlib>=3
+  - numpy>1.18
+  - pandas>=1.0
+  - pyyaml>=5.4.1
+  - scikit-learn>=0.21
+  - tqdm
+  - pyquaternion
   - pywinpty==2.0.2 ; sys_platform == 'win32' and python_version == '3.6'
   requires_python: '>=3.8'
 - kind: pypi
@@ -10252,8 +10282,8 @@ packages:
 - kind: pypi
   name: open3d
   version: 0.18.0
-  url: https://files.pythonhosted.org/packages/5c/ba/a4c5986951344f804b5cbd86f0a87d9ea5969e8d13f1e8913e2d8276e0d8/open3d-0.18.0-cp311-cp311-manylinux_2_27_x86_64.whl
-  sha256: 8e3d1d1900a8f4d956f6819c246c78081725b9b0888f8549d2a7a49c8daa1303
+  url: https://files.pythonhosted.org/packages/43/ee/1c0f25a57b43849fb9f1e773e5c065aa3363b49313bdbdfb7b35337bbab3/open3d-0.18.0-cp311-cp311-win_amd64.whl
+  sha256: 2da5da6c9eb9227baee6fe98baa992233aca36b83ec9e7d4093c77e762db60e6
   requires_dist:
   - numpy>=1.18.0
   - dash>=2.6.0
@@ -10261,22 +10291,13 @@ packages:
   - nbformat>=5.7.0
   - configargparse
   - ipywidgets>=8.0.4
-  - addict
-  - pillow>=9.3.0
-  - matplotlib>=3
-  - numpy>1.18
-  - pandas>=1.0
-  - pyyaml>=5.4.1
-  - scikit-learn>=0.21
-  - tqdm
-  - pyquaternion
   - pywinpty==2.0.2 ; sys_platform == 'win32' and python_version == '3.6'
   requires_python: '>=3.8'
 - kind: pypi
   name: opencv-python
   version: 4.10.0.84
-  url: https://files.pythonhosted.org/packages/ec/6c/fab8113424af5049f85717e8e527ca3773299a3c6b02506e66436e19874f/opencv_python-4.10.0.84-cp37-abi3-win_amd64.whl
-  sha256: 32dbbd94c26f611dc5cc6979e6b7aa1f55a64d6b463cc1dcd3c95505a63e48fe
+  url: https://files.pythonhosted.org/packages/3f/a4/d2537f47fd7fcfba966bd806e3ec18e7ee1681056d4b0a9c8d983983e4d5/opencv_python-4.10.0.84-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  sha256: 9ace140fc6d647fbe1c692bcb2abce768973491222c067c131d80957c595b71f
   requires_dist:
   - numpy>=1.13.3 ; python_version < '3.7'
   - numpy>=1.21.0 ; python_version <= '3.9' and platform_system == 'Darwin' and platform_machine == 'arm64'
@@ -10309,8 +10330,8 @@ packages:
 - kind: pypi
   name: opencv-python
   version: 4.10.0.84
-  url: https://files.pythonhosted.org/packages/3f/a4/d2537f47fd7fcfba966bd806e3ec18e7ee1681056d4b0a9c8d983983e4d5/opencv_python-4.10.0.84-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  sha256: 9ace140fc6d647fbe1c692bcb2abce768973491222c067c131d80957c595b71f
+  url: https://files.pythonhosted.org/packages/ec/6c/fab8113424af5049f85717e8e527ca3773299a3c6b02506e66436e19874f/opencv_python-4.10.0.84-cp37-abi3-win_amd64.whl
+  sha256: 32dbbd94c26f611dc5cc6979e6b7aa1f55a64d6b463cc1dcd3c95505a63e48fe
   requires_dist:
   - numpy>=1.13.3 ; python_version < '3.7'
   - numpy>=1.21.0 ; python_version <= '3.9' and platform_system == 'Darwin' and platform_machine == 'arm64'
@@ -12550,8 +12571,8 @@ packages:
 - kind: pypi
   name: safetensors
   version: 0.4.3
-  url: https://files.pythonhosted.org/packages/cb/f6/19f268662be898ff2a23ac06f8dd0d2956b2ecd204c96e1ee07ba292c119/safetensors-0.4.3-cp311-none-win_amd64.whl
-  sha256: 840b7ac0eff5633e1d053cc9db12fdf56b566e9403b4950b2dc85393d9b88d67
+  url: https://files.pythonhosted.org/packages/d5/85/1e7d2804cbf82204cde462d16f1cb0ff5814b03f559fb46ceaa6b7020db4/safetensors-0.4.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  sha256: 0bf4f9d6323d9f86eef5567eabd88f070691cf031d4c0df27a40d3b4aaee755b
   requires_dist:
   - numpy>=1.21.6 ; extra == 'numpy'
   - safetensors[numpy] ; extra == 'torch'
@@ -12630,8 +12651,8 @@ packages:
 - kind: pypi
   name: safetensors
   version: 0.4.3
-  url: https://files.pythonhosted.org/packages/d5/85/1e7d2804cbf82204cde462d16f1cb0ff5814b03f559fb46ceaa6b7020db4/safetensors-0.4.3-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  sha256: 0bf4f9d6323d9f86eef5567eabd88f070691cf031d4c0df27a40d3b4aaee755b
+  url: https://files.pythonhosted.org/packages/cb/f6/19f268662be898ff2a23ac06f8dd0d2956b2ecd204c96e1ee07ba292c119/safetensors-0.4.3-cp311-none-win_amd64.whl
+  sha256: 840b7ac0eff5633e1d053cc9db12fdf56b566e9403b4950b2dc85393d9b88d67
   requires_dist:
   - numpy>=1.21.6 ; extra == 'numpy'
   - safetensors[numpy] ; extra == 'torch'
@@ -12670,8 +12691,8 @@ packages:
 - kind: pypi
   name: scikit-learn
   version: 1.5.0
-  url: https://files.pythonhosted.org/packages/bf/8a/06e499bca463905000f50e461c9445e949aafdd33ea3b62024aa2238b83d/scikit_learn-1.5.0.tar.gz
-  sha256: 789e3db01c750ed6d496fa2db7d50637857b451e57bcae863bff707c1247bef7
+  url: https://files.pythonhosted.org/packages/46/c0/63d3a8da39a2ee051df229111aa93f6dca2b56f8080abd34993938166455/scikit_learn-1.5.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+  sha256: 118a8d229a41158c9f90093e46b3737120a165181a1b58c03461447aa4657415
   requires_dist:
   - numpy>=1.19.5
   - scipy>=1.6.0
@@ -12727,8 +12748,8 @@ packages:
 - kind: pypi
   name: scikit-learn
   version: 1.5.0
-  url: https://files.pythonhosted.org/packages/46/c0/63d3a8da39a2ee051df229111aa93f6dca2b56f8080abd34993938166455/scikit_learn-1.5.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-  sha256: 118a8d229a41158c9f90093e46b3737120a165181a1b58c03461447aa4657415
+  url: https://files.pythonhosted.org/packages/bf/8a/06e499bca463905000f50e461c9445e949aafdd33ea3b62024aa2238b83d/scikit_learn-1.5.0.tar.gz
+  sha256: 789e3db01c750ed6d496fa2db7d50637857b451e57bcae863bff707c1247bef7
   requires_dist:
   - numpy>=1.19.5
   - scipy>=1.6.0
@@ -13426,8 +13447,8 @@ packages:
 - kind: pypi
   name: torch
   version: 2.2.2
-  url: https://files.pythonhosted.org/packages/5c/01/5ab75f138bf32d7a69df61e4997e24eccad87cc009f5fb7e2a31af8a4036/torch-2.2.2-cp311-cp311-win_amd64.whl
-  sha256: f9ef0a648310435511e76905f9b89612e45ef2c8b023bee294f5e6f7e73a3e7c
+  url: https://files.pythonhosted.org/packages/c3/33/d7a6123231bd4d04c7005dde8507235772f3bc4622a25f3a88c016415d49/torch-2.2.2-cp311-cp311-manylinux1_x86_64.whl
+  sha256: ad4c03b786e074f46606f4151c0a1e3740268bcf29fbd2fdf6666d66341c1dcb
   requires_dist:
   - filelock
   - typing-extensions>=4.8.0
@@ -13480,8 +13501,8 @@ packages:
 - kind: pypi
   name: torch
   version: 2.2.2
-  url: https://files.pythonhosted.org/packages/c3/33/d7a6123231bd4d04c7005dde8507235772f3bc4622a25f3a88c016415d49/torch-2.2.2-cp311-cp311-manylinux1_x86_64.whl
-  sha256: ad4c03b786e074f46606f4151c0a1e3740268bcf29fbd2fdf6666d66341c1dcb
+  url: https://files.pythonhosted.org/packages/5c/01/5ab75f138bf32d7a69df61e4997e24eccad87cc009f5fb7e2a31af8a4036/torch-2.2.2-cp311-cp311-win_amd64.whl
+  sha256: f9ef0a648310435511e76905f9b89612e45ef2c8b023bee294f5e6f7e73a3e7c
   requires_dist:
   - filelock
   - typing-extensions>=4.8.0
@@ -13524,8 +13545,8 @@ packages:
 - kind: pypi
   name: torchvision
   version: 0.17.2
-  url: https://files.pythonhosted.org/packages/c6/75/d869f600fc33df8b8ca99943e165a4ca23b73c68dc1942098fde0a6b46f3/torchvision-0.17.2-cp311-cp311-win_amd64.whl
-  sha256: 6835897df852fad1015e6a106c167c83848114cbcc7d86112384a973404e4431
+  url: https://files.pythonhosted.org/packages/68/49/5e1c771294407bb25e6dbcf169aef5cffefcddf27b0176125a9b0af06a1e/torchvision-0.17.2-cp311-cp311-manylinux1_x86_64.whl
+  sha256: 3bbc24b7713e8f22766992562547d8b4b10001208d372fe599255af84bfd1a69
   requires_dist:
   - numpy
   - torch==2.2.2
@@ -13546,8 +13567,8 @@ packages:
 - kind: pypi
   name: torchvision
   version: 0.17.2
-  url: https://files.pythonhosted.org/packages/68/49/5e1c771294407bb25e6dbcf169aef5cffefcddf27b0176125a9b0af06a1e/torchvision-0.17.2-cp311-cp311-manylinux1_x86_64.whl
-  sha256: 3bbc24b7713e8f22766992562547d8b4b10001208d372fe599255af84bfd1a69
+  url: https://files.pythonhosted.org/packages/c6/75/d869f600fc33df8b8ca99943e165a4ca23b73c68dc1942098fde0a6b46f3/torchvision-0.17.2-cp311-cp311-win_amd64.whl
+  sha256: 6835897df852fad1015e6a106c167c83848114cbcc7d86112384a973404e4431
   requires_dist:
   - numpy
   - torch==2.2.2

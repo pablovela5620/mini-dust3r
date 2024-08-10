@@ -25,7 +25,7 @@ class OptimizedResult:
     rgb_hw3_list: list[Float32[np.ndarray, "h w 3"]]
     depth_hw_list: list[Float32[np.ndarray, "h w"]]
     conf_hw_list: list[Float32[np.ndarray, "h w"]]
-    masks_list: Bool[np.ndarray, "h w"]
+    masks_list: list[Bool[np.ndarray, "h w"]]
     point_cloud: trimesh.PointCloud
     mesh: trimesh.Trimesh
 
@@ -121,7 +121,7 @@ def scene_to_results(scene: BasePCOptimizer, min_conf_thr: int) -> OptimizedResu
     log_conf_trf: Float32[torch.Tensor, ""] = scene.conf_trf(torch.tensor(min_conf_thr))
     # set the minimum confidence threshold
     scene.min_conf_thr = float(log_conf_trf)
-    masks_list: Bool[np.ndarray, "h w"] = [
+    masks_list: list[Bool[np.ndarray, "h w"]] = [
         mask.numpy(force=True) for mask in scene.get_masks()
     ]
 
@@ -155,7 +155,7 @@ def scene_to_results(scene: BasePCOptimizer, min_conf_thr: int) -> OptimizedResu
 
 
 def inferece_dust3r(
-    image_dir_or_list: Path | list[Path],
+    image_dir_or_list: Path | list[Path] | list[str] | str,
     model: AsymmetricCroCo3DStereo,
     device: Literal["cpu", "cuda", "mps"],
     batch_size: int = 1,

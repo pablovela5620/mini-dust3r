@@ -7,13 +7,15 @@ name = "mini-dust3r"
 version = "0.1.1"
 description = "Miniature version of dust3r, focused on inference"
 requires-python = ">=3.10.0"
-license = {file = "LICENSE"}
+license = { file = "LICENSE" }
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python",
 ]
+readme = "README.md"
 
-dependencies=[
+
+dependencies = [
     "torch>=2.2.0,<2.3",
     "torchvision>=0.17.0,<0.18",
     "matplotlib>=3.8.4",
@@ -26,6 +28,7 @@ dependencies=[
     "jaxtyping>=0.2.28",
     "gradio>=4.29.0",
     "rerun-sdk>=0.15.1",
+    "beartype>=0.18.5",
     # not in conda dependencies
     "roma>=1.5",
     "opencv-python>=4.9.0.80",
@@ -46,12 +49,19 @@ channels = ["nvidia/label/cuda-11.8.0", "nvidia", "conda-forge", "pytorch"]
 platforms = ["linux-64", "osx-arm64", "win-64"]
 
 [tool.pixi.system-requirements]
-libc = { family="glibc", version="2.31" }
+libc = { family = "glibc", version = "2.31" }
 
 [tool.pixi.tasks]
-_build-croco = { cmd = "python setup.py build_ext --inplace", cwd = "mini_dust3r/croco/curope/", outputs=["lib.linux-x86_64-cpython-311/curope.cpython-311-x86_64-linux-gnu.so"]}
-_download-checkpoint = {cmd = "ls checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth || wget -P checkpoints/ https://download.europe.naverlabs.com/ComputerVision/DUSt3R/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth", outputs=["checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth"]}
-_post-install = { cmd = "pwd", depends_on = ["download-checkpoint", "build-croco"]}
+_build-croco = { cmd = "python setup.py build_ext --inplace", cwd = "mini_dust3r/croco/curope/", outputs = [
+    "lib.linux-x86_64-cpython-311/curope.cpython-311-x86_64-linux-gnu.so",
+] }
+_download-checkpoint = { cmd = "ls checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth || wget -P checkpoints/ https://download.europe.naverlabs.com/ComputerVision/DUSt3R/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth", outputs = [
+    "checkpoints/DUSt3R_ViTLarge_BaseDecoder_512_dpt.pth",
+] }
+_post-install = { cmd = "pwd", depends_on = [
+    "download-checkpoint",
+    "build-croco",
+] }
 _dev-install = "python -m pip install build twine"
 
 [tool.pixi.tasks.build-wheel]
@@ -63,15 +73,15 @@ description = "Build python wheels"
 cmd = "PYTORCH_ENABLE_MPS_FALLBACK=1 python tools/rerun_demo.py"
 description = "runs demo using rerun visualizer"
 
-[tool.pixi.tasks.gradio-demo]
+[tool.pixi.tasks.app]
 cmd = "python tools/app.py"
 description = "run gradio frontend for mini-dust3r"
 
 [tool.pixi.dependencies]
 python = "3.11.*"
 pip = ">=23.3.2,<23.4"
-pytorch = {version = ">=2.2.0,<2.3", channel="pytorch"}
-torchvision = {version = ">=0.17.0,<0.18", channel="pytorch"}
+pytorch = { version = ">=2.2.0,<2.3", channel = "pytorch" }
+torchvision = { version = ">=0.17.0,<0.18", channel = "pytorch" }
 matplotlib = ">=3.8.3,<3.9"
 einops = ">=0.7.0,<0.8"
 tqdm = ">=4.66.2,<4.67"
@@ -82,10 +92,16 @@ pyglet = ">=1.5.27,<1.6"
 jaxtyping = ">=0.2.28,<0.3"
 gradio = ">=4.29.0,<4.30"
 rerun-sdk = ">=0.15.1,<0.16"
+beartype = ">=0.18.5,<0.19"
 
 [tool.pixi.pypi-dependencies]
-mini-dust3r = { path = ".", editable = true}
+mini-dust3r = { path = ".", editable = true }
 
 [tool.pixi.target.linux-64.dependencies]
-cuda = {version = "*", channel="nvidia/label/cuda-11.8.0"}
-pytorch-cuda = {version = "11.8.*", channel="pytorch"}
+cuda = { version = "*", channel = "nvidia/label/cuda-11.8.0" }
+pytorch-cuda = { version = "11.8.*", channel = "pytorch" }
+
+[tool.ruff]
+ignore = [
+    "F722", # Forward annotation false positive from jaxtyping. Should be caught by pyright.
+]
