@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mini-dust3r"
-version = "0.1.1"
+version = "0.1.2"
 description = "Miniature version of dust3r, focused on inference"
 requires-python = ">=3.10.0"
 license = { file = "LICENSE" }
@@ -87,6 +87,7 @@ beartype = ">=0.18.5,<0.19"
 einops = ">=0.8.0,<0.9"
 gradio = ">=4.41.0,<5"
 scipy = ">=1.14.0,<2"
+pip = ">=24.2,<25"
 
 [tool.pixi.pypi-dependencies]
 mini-dust3r = { path = ".", editable = true }
