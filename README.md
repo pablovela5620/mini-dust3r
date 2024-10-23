@@ -19,7 +19,7 @@ or from source using [Pixi](http://pixi.sh)
 
 ``` bash
 git clone https://github.com/pablovela5620/mini-dust3r.git
-pixi run gradio-demo
+pixi run app
 ```
 
 You can also just use rerun demo directly with
