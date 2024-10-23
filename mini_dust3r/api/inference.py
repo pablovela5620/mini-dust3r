@@ -31,7 +31,10 @@ class OptimizedResult:
 
 
 def log_optimized_result(
-    optimized_result: OptimizedResult, parent_log_path: Path
+    optimized_result: OptimizedResult,
+    parent_log_path: Path,
+    jpeg_quality: int = 95,
+    log_depth: bool = True,
 ) -> None:
     rr.log(f"{parent_log_path}", rr.ViewCoordinates.RDF, timeless=True)
     # log pointcloud
@@ -66,12 +69,15 @@ def log_optimized_result(
     for i, (rgb_hw3, depth_hw, k_33, world_T_cam_44) in enumerate(pbar):
         camera_log_path = f"{parent_log_path}/camera_{i}"
         height, width, _ = rgb_hw3.shape
+        # convert image to UInt8 to allow for compression
+        rgb_hw3 = (rgb_hw3 * 255).astype(np.uint8)
         rr.log(
             f"{camera_log_path}",
             rr.Transform3D(
                 translation=world_T_cam_44[:3, 3],
                 mat3x3=world_T_cam_44[:3, :3],
                 from_parent=False,
+                axis_length=0.025,
             ),
         )
         rr.log(
@@ -85,12 +91,13 @@ def log_optimized_result(
         )
         rr.log(
             f"{camera_log_path}/pinhole/rgb",
-            rr.Image(rgb_hw3),
+            rr.Image(rgb_hw3).compress(jpeg_quality=jpeg_quality),
         )
-        rr.log(
-            f"{camera_log_path}/pinhole/depth",
-            rr.DepthImage(depth_hw),
-        )
+        if log_depth:
+            rr.log(
+                f"{camera_log_path}/pinhole/depth",
+                rr.DepthImage(depth_hw),
+            )
 
 
 def scene_to_results(scene: BasePCOptimizer, min_conf_thr: int) -> OptimizedResult:
@@ -104,8 +111,6 @@ def scene_to_results(scene: BasePCOptimizer, min_conf_thr: int) -> OptimizedResu
     depth_hw_list: list[Float32[np.ndarray, "h w"]] = [
         depth.numpy(force=True) for depth in scene.get_depthmaps()
     ]
-    # normalized depth
-    # depth_hw_list = [depth_hw / depth_hw.max() for depth_hw in depth_hw_list]
 
     conf_hw_list: list[Float32[np.ndarray, "h w"]] = [
         c.numpy(force=True) for c in scene.im_conf
@@ -123,6 +128,11 @@ def scene_to_results(scene: BasePCOptimizer, min_conf_thr: int) -> OptimizedResu
     scene.min_conf_thr = float(log_conf_trf)
     masks_list: list[Bool[np.ndarray, "h w"]] = [
         mask.numpy(force=True) for mask in scene.get_masks()
+    ]
+
+    # clean up depth based on mask
+    depth_hw_list: list[Float32[np.ndarray, "h w"]] = [
+        depth_hw * mask for depth_hw, mask in zip(depth_hw_list, masks_list)
     ]
 
     point_cloud: Float32[np.ndarray, "num_points 3"] = np.concatenate(

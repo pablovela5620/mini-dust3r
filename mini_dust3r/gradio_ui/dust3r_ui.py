@@ -1,20 +1,32 @@
-import gradio as gr
+try:
+    import spaces  # type: ignore # noqa: F401
 
-# import spaces
+    IN_SPACES = True
+except ImportError:
+    print("Not running on Zero")
+    IN_SPACES = False
+
+import gradio as gr
+import os
 import torch
 from gradio_rerun import Rerun
 import rerun as rr
 import rerun.blueprint as rrb
 from pathlib import Path
-import uuid
+import tempfile
 
 from mini_dust3r.api import OptimizedResult, inferece_dust3r, log_optimized_result
 from mini_dust3r.model import AsymmetricCroCo3DStereo
 
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-model = AsymmetricCroCo3DStereo.from_pretrained(
-    "nielsr/DUSt3R_ViTLarge_BaseDecoder_512_dpt"
-).to(DEVICE)
+from pillow_heif import register_heif_opener  # noqa
+
+register_heif_opener()  # noqa
+
+if gr.NO_RELOAD:
+    DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+    model = AsymmetricCroCo3DStereo.from_pretrained(
+        "nielsr/DUSt3R_ViTLarge_BaseDecoder_512_dpt"
+    ).to(DEVICE)
 
 
 def create_blueprint(image_name_list: list[str], log_path: Path) -> rrb.Blueprint:
@@ -50,17 +62,21 @@ def create_blueprint(image_name_list: list[str], log_path: Path) -> rrb.Blueprin
     return blueprint
 
 
-# @spaces.GPU
-def predict(image_name_list: list[str] | str):
+@rr.thread_local_stream("dust3r_rrd")
+def predict(
+    image_name_list: list[str] | str,
+    pending_cleanup: list[str] = [],
+    progress=gr.Progress(track_tqdm=True),
+) -> str:
     # check if is list or string and if not raise error
     if not isinstance(image_name_list, list) and not isinstance(image_name_list, str):
         raise gr.Error(
             f"Input must be a list of strings or a string, got: {type(image_name_list)}"
         )
-    uuid_str = str(uuid.uuid4())
-    filename = Path("tmp/gradio") / f"{uuid_str}.rrd"
-    filename.parent.mkdir(parents=True, exist_ok=True)
-    rr.init(f"{uuid_str}")
+
+    temp = tempfile.NamedTemporaryFile(prefix="dust3r_", suffix=".rrd", delete=False)
+    pending_cleanup.append(temp.name)
+
     log_path = Path("world")
 
     if isinstance(image_name_list, str):
@@ -77,40 +93,56 @@ def predict(image_name_list: list[str] | str):
     rr.send_blueprint(blueprint)
 
     rr.set_time_sequence("sequence", 0)
-    log_optimized_result(optimized_results, log_path)
-    rr.save(filename.as_posix())
-    return filename.as_posix()
+    log_optimized_result(optimized_results, log_path, jpeg_quality=80)
+    rr.save(temp.name, default_blueprint=blueprint)
+    return temp.name
 
 
-with gr.Blocks(
-    css=""".gradio-container {margin: 0 !important; min-width: 100%};""",
-    title="Mini-DUSt3R Demo",
-) as demo:
-    # scene state is save so that you can change conf_thr, cam_size... without rerunning the inference
-    gr.HTML('<h2 style="text-align: center;">Mini-DUSt3R Demo</h2>')
-    gr.HTML(
-        '<p style="text-align: center;">Unofficial DUSt3R demo using the mini-dust3r pip package</p>'
+if IN_SPACES:
+    predict = spaces.GPU(predict)
+
+
+def cleaup_rrds(pending_cleanup: list) -> None:
+    for f in pending_cleanup:
+        os.unlink(f)
+
+
+def get_multi_example_files(
+    example_parent_dir: Path, patterns: list[str]
+) -> list[list[list[str]]]:
+    final_example_files: list[list[str]] = []
+    example_multi_dirs: list[Path] = sorted(
+        directory for directory in example_parent_dir.glob("*")
     )
-    gr.HTML(
-        '<p style="text-align: center;">More info <a href="https://github.com/pablovela5620/mini-dust3r">here</a></p>'
-    )
+    for directory in example_multi_dirs:
+        example_multi_files: list[str] = sorted(
+            str(file) for pattern in patterns for file in directory.glob(pattern)
+        )
+        final_example_files.append([example_multi_files])
+
+    return final_example_files
+
+
+with gr.Blocks() as mini_dust3r_ui:
+    pending_cleanup = gr.State([], time_to_live=10, delete_callback=cleaup_rrds)
     with gr.Tab(label="Single Image"):
         with gr.Column():
             single_image = gr.Image(type="filepath", height=300)
             run_btn_single = gr.Button("Run")
             rerun_viewer_single = Rerun(height=900)
             run_btn_single.click(
-                fn=predict, inputs=[single_image], outputs=[rerun_viewer_single]
+                fn=predict,
+                inputs=[single_image, pending_cleanup],
+                outputs=[rerun_viewer_single],
             )
 
             example_single_dir = Path("examples/single_image")
-            patterns = ["*.jpg", "*.png", "*.jpeg"]
+            patterns: list[str] = ["*.jpg", "*.png", "*.jpeg", "*.HEIC"]
             example_single_files = sorted(
                 file
                 for pattern in patterns
                 for file in example_single_dir.glob(pattern)
             )
-            # example_single_files = sorted(example_single_dir.glob("*.png"))
 
             examples_single = gr.Examples(
                 examples=example_single_files,
@@ -125,8 +157,21 @@ with gr.Blocks(
             run_btn_multi = gr.Button("Run")
             rerun_viewer_multi = Rerun(height=900)
             run_btn_multi.click(
-                fn=predict, inputs=[multi_files], outputs=[rerun_viewer_multi]
+                fn=predict,
+                inputs=[multi_files, pending_cleanup],
+                outputs=[rerun_viewer_multi],
             )
 
+            example_multi_dir = Path("examples/multi_image")
+            # get all directories in examples/multi_image
+            examples_multi_files: list[list[list[str]]] = get_multi_example_files(
+                example_multi_dir, patterns
+            )
 
-demo.launch()
+            examples_multi = gr.Examples(
+                examples=examples_multi_files,
+                inputs=[multi_files],
+                outputs=[rerun_viewer_multi],
+                fn=predict,
+                cache_examples="lazy",
+            )

@@ -97,7 +97,9 @@ def inference(
     if multiple_shapes:  # force bs=1
         batch_size = 1
 
-    for i in tqdm.trange(0, len(pairs), batch_size, disable=not verbose):
+    for i in tqdm.trange(
+        0, len(pairs), batch_size, desc="Performing Pair Inference", disable=not verbose
+    ):
         res: Dust3rResult = loss_of_one_batch(
             collate_with_cat(pairs[i : i + batch_size]), model, None, device
         )
