@@ -36,7 +36,7 @@ def log_optimized_result(
     jpeg_quality: int = 95,
     log_depth: bool = True,
 ) -> None:
-    rr.log(f"{parent_log_path}", rr.ViewCoordinates.RDF, timeless=True)
+    rr.log(f"{parent_log_path}", rr.ViewCoordinates.RDF, static=True)
     # log pointcloud
     rr.log(
         f"{parent_log_path}/pointcloud",
@@ -44,7 +44,7 @@ def log_optimized_result(
             positions=optimized_result.point_cloud.vertices,
             colors=optimized_result.point_cloud.colors,
         ),
-        timeless=True,
+        static=True,
     )
 
     mesh = optimized_result.mesh
@@ -55,7 +55,7 @@ def log_optimized_result(
             vertex_colors=mesh.visual.vertex_colors,
             triangle_indices=mesh.faces,
         ),
-        timeless=True,
+        static=True,
     )
     pbar = tqdm(
         zip(
