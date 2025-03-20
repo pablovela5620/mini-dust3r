@@ -4,11 +4,15 @@ from pathlib import Path
 from argparse import ArgumentParser
 import torch
 
-from mini_dust3r.api import OptimizedResult, inferece_dust3r, log_optimized_result
+from mini_dust3r.api import (
+    OptimizedResult,
+    inferece_dust3r_from_paths,
+    log_optimized_result,
+)
 from mini_dust3r.model import AsymmetricCroCo3DStereo
 
 
-def create_blueprint(image_name_list: list[str], log_path: Path) -> rrb.Blueprint:
+def create_blueprint(image_name_list: list[Path], log_path: Path) -> rrb.Blueprint:
     # dont show 2d views if there are more than 4 images as to not clutter the view
     if len(image_name_list) > 4:
         blueprint = rrb.Blueprint(
@@ -53,14 +57,18 @@ def main(image_dir: Path):
         "naver/DUSt3R_ViTLarge_BaseDecoder_512_dpt"
     ).to(device)
 
-    optimized_results: OptimizedResult = inferece_dust3r(
+    image_name_list: list[Path] = [
+        image_path for image_path in image_dir.iterdir() if image_path.is_file()
+    ]
+    blueprint = create_blueprint(image_name_list, "world")
+    rr.send_blueprint(blueprint)
+
+    optimized_results: OptimizedResult = inferece_dust3r_from_paths(
         image_dir_or_list=image_dir,
         model=model,
         device=device,
         batch_size=1,
     )
-    # blueprint = create_blueprint(image_dir, "world")
-    # rr.send_blueprint(blueprint)
     log_optimized_result(optimized_results, Path("world"))
 
 

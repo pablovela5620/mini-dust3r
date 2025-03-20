@@ -164,8 +164,8 @@ def scene_to_results(scene: BasePCOptimizer, min_conf_thr: int) -> OptimizedResu
     return optimised_result
 
 
-def inferece_dust3r(
-    image_dir_or_list: Path | list[Path] | list[str] | str,
+def inferece_dust3r_from_paths(
+    image_dir_or_list: Path | list[Path],
     model: AsymmetricCroCo3DStereo,
     device: Literal["cpu", "cuda", "mps"],
     batch_size: int = 1,
@@ -193,16 +193,9 @@ def inferece_dust3r(
     Raises:
         ValueError: If `image_dir_or_list` is neither a list of paths nor a path.
     """
-    if isinstance(image_dir_or_list, list):
-        imgs: list[ImageDict] = load_images(
-            folder_or_list=image_dir_or_list, size=image_size, verbose=True
-        )
-    elif isinstance(image_dir_or_list, Path):
-        imgs: list[ImageDict] = load_images(
-            folder_or_list=str(image_dir_or_list), size=image_size, verbose=True
-        )
-    else:
-        raise ValueError("image_dir_or_list should be a list of paths or a path")
+    imgs: list[ImageDict] = load_images(
+        image_dir_or_list=image_dir_or_list, size=image_size, verbose=True
+    )
 
     # if only one image was loaded, duplicate it to feed into stereo network
     if len(imgs) == 1:

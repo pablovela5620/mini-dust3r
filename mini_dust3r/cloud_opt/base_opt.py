@@ -10,7 +10,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import roma
-from copy import deepcopy
 import tqdm
 
 from mini_dust3r.utils.geometry import inv, geotrf

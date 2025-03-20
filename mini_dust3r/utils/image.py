@@ -5,16 +5,17 @@
 # utilitary functions about images (loading/converting...)
 # --------------------------------------------------------
 import os
+from PIL.ImageFile import ImageFile
 import torch
 import numpy as np
 import PIL.Image
 from PIL.ImageOps import exif_transpose
 import torchvision.transforms as tvf
 
-os.environ["OPENCV_IO_ENABLE_OPENEXR"] = "1"
-import cv2  # noqa
 from typing import Literal, TypedDict
 from jaxtyping import Float32, Int32
+from pathlib import Path
+import cv2
 
 try:
     from pillow_heif import register_heif_opener  # noqa
@@ -32,18 +33,6 @@ class ImageDict(TypedDict):
     true_shape: tuple[int, int] | Int32[torch.Tensor, "b 2"]
     idx: int | list[int]
     instance: str | list[str]
-
-
-def imread_cv2(path, options=cv2.IMREAD_COLOR):
-    """Open an image or a depthmap with opencv-python."""
-    if path.endswith((".exr", "EXR")):
-        options = cv2.IMREAD_ANYDEPTH
-    img = cv2.imread(path, options)
-    if img is None:
-        raise IOError(f"Could not load image={path} with {options=}")
-    if img.ndim == 3:
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    return img
 
 
 def rgb(ftensor, true_shape=None):
@@ -65,67 +54,40 @@ def rgb(ftensor, true_shape=None):
     return img.clip(min=0, max=1)
 
 
-def _resize_pil_image(img, long_edge_size):
-    S = max(img.size)
-    if S > long_edge_size:
+def _resize_pil_image(img: PIL.Image.Image, long_edge_size: int) -> PIL.Image.Image:
+    max_edge_size = max(img.size)
+    if max_edge_size > long_edge_size:
         interp = PIL.Image.LANCZOS
-    elif S <= long_edge_size:
+    elif max_edge_size <= long_edge_size:
         interp = PIL.Image.BICUBIC
-    new_size = tuple(int(round(x * long_edge_size / S)) for x in img.size)
+    new_size = tuple(int(round(x * long_edge_size / max_edge_size)) for x in img.size)
     return img.resize(new_size, interp)
 
 
 def load_images(
-    folder_or_list: str | list,
+    image_dir_or_list: list[Path] | Path,
     size: Literal[224, 512],
     square_ok: bool = False,
     verbose: bool = True,
 ) -> list[ImageDict]:
     """open and convert all images in a list or folder to proper input format for DUSt3R"""
-    if isinstance(folder_or_list, str):
-        if verbose:
-            print(f">> Loading images from {folder_or_list}")
-        root, folder_content = folder_or_list, sorted(os.listdir(folder_or_list))
-
-    elif isinstance(folder_or_list, list):
-        if verbose:
-            print(f">> Loading a list of {len(folder_or_list)} images")
-        root, folder_content = "", folder_or_list
-
-    else:
-        raise ValueError(f"bad {folder_or_list=} ({type(folder_or_list)})")
-
-    supported_images_extensions = [".jpg", ".jpeg", ".png"]
+    supported_images_extensions: list[str] = [".jpg", ".jpeg", ".png"]
     if heif_support_enabled:
         supported_images_extensions += [".heic", ".heif"]
     supported_images_extensions = tuple(supported_images_extensions)
+    # get a list of paths of all images in supported_images_extensions
+    if isinstance(image_dir_or_list, list):
+        path_iter: list[Path] = image_dir_or_list
+    else:
+        path_iter: list[Path] = list(image_dir_or_list.iterdir())
 
-    imgs = []
-    for path in folder_content:
-        if not path.lower().endswith(supported_images_extensions):
+    imgs: list[ImageDict] = []
+    for path in path_iter:
+        if not path.is_file() or path.suffix.lower() not in supported_images_extensions:
             continue
-        img = exif_transpose(PIL.Image.open(os.path.join(root, path))).convert("RGB")
-        W1, H1 = img.size
-        if size == 224:
-            # resize short side to 224 (then crop)
-            img = _resize_pil_image(img, round(size * max(W1 / H1, H1 / W1)))
-        else:
-            # resize long side to 512
-            img = _resize_pil_image(img, size)
-        W, H = img.size
-        cx, cy = W // 2, H // 2
-        if size == 224:
-            half = min(cx, cy)
-            img = img.crop((cx - half, cy - half, cx + half, cy + half))
-        else:
-            halfw, halfh = ((2 * cx) // 16) * 8, ((2 * cy) // 16) * 8
-            if not (square_ok) and W == H:
-                halfh = 3 * halfw / 4
-            img = img.crop((cx - halfw, cy - halfh, cx + halfw, cy + halfh))
-
-        W2, H2 = img.size
-        if verbose:
-            print(f" - adding {path} with resolution {W1}x{H1} --> {W2}x{H2}")
+        img: PIL.Image.Image = resize_and_crop_pil(
+            image_path=path, size=size, square_ok=square_ok
+        )
         imgs.append(
             dict(
                 img=ImgNorm(img)[None],
@@ -134,8 +96,96 @@ def load_images(
                 instance=str(len(imgs)),
             )
         )
+        # img = resize_and_crop_cv2(image_path=path, size=size, square_ok=square_ok)
+        # H, W = img.shape[:2]
+        # imgs.append(
+        #     dict(
+        #         img=ImgNorm(img)[None],
+        #         true_shape=np.int32([[H, W]]),
+        #         idx=len(imgs),
+        #         instance=str(len(imgs)),
+        #     )
+        # )
 
-    assert imgs, "no images foud at " + root
+    assert imgs, f"no images found in {image_dir_or_list}"
     if verbose:
         print(f" (Found {len(imgs)} images)")
     return imgs
+
+
+def resize_and_crop_pil(
+    image_path: Path, size: Literal[224, 512], square_ok: bool = False
+) -> PIL.Image.Image:
+    assert image_path.exists(), f"bad {image_path=}"
+    img_pil_path: ImageFile = PIL.Image.open(image_path)
+    img: PIL.Image.Image = exif_transpose(img_pil_path).convert("RGB")
+    original_w, original_h = img.size
+    ## First Resize
+    if size == 224:
+        # resize short side to 224 (then crop)
+        size_ratio: float = max(original_w / size, original_h / size)
+        long_edge_size: int = round(size * size_ratio)
+        img = _resize_pil_image(img, long_edge_size)
+    elif size == 512:
+        # resize long side to 512
+        img = _resize_pil_image(img, size)
+
+    ## Then Crop
+    W, H = img.size
+    cx, cy = W // 2, H // 2
+    if size == 224:
+        half: int = min(cx, cy)
+        img = img.crop((cx - half, cy - half, cx + half, cy + half))
+    else:
+        halfw, halfh = ((2 * cx) // 16) * 8, ((2 * cy) // 16) * 8
+        if not (square_ok) and W == H:
+            halfh = 3 * halfw / 4
+        img = img.crop((cx - halfw, cy - halfh, cx + halfw, cy + halfh))
+
+    resized_w, resized_h = img.size
+    print(
+        f" - adding {image_path} with resolution {original_w}x{original_h} --> {resized_w}x{resized_h}"
+    )
+    return img
+
+
+def resize_and_crop_cv2(
+    image_path: Path, size: Literal[224, 512], square_ok: bool = False
+) -> np.ndarray:
+    assert image_path.exists(), f"bad {image_path=}"
+    img_bgr = cv2.imread(str(image_path))
+    assert img_bgr is not None, f"Failed to load {image_path}"
+    img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+
+    original_h, original_w = img.shape[:2]
+
+    # First Resize
+    if size == 224:
+        size_ratio = max(original_w / size, original_h / size)
+        long_edge_size = round(size * size_ratio)
+        scale = long_edge_size / max(original_w, original_h)
+    elif size == 512:
+        scale = size / max(original_w, original_h)
+
+    new_w, new_h = int(round(original_w * scale)), int(round(original_h * scale))
+    interp = cv2.INTER_LANCZOS4 if scale < 1 else cv2.INTER_CUBIC
+    img = cv2.resize(img, (new_w, new_h), interpolation=interp)
+
+    # Then Crop
+    H, W = img.shape[:2]
+    cx, cy = W // 2, H // 2
+
+    if size == 224:
+        half = min(cx, cy)
+        img = img[cy - half : cy + half, cx - half : cx + half]
+    else:
+        halfw, halfh = ((2 * cx) // 16) * 8, ((2 * cy) // 16) * 8
+        if not square_ok and W == H:
+            halfh = int(3 * halfw / 4)
+        img = img[cy - halfh : cy + halfh, cx - halfw : cx + halfw]
+
+    resized_h, resized_w = img.shape[:2]
+    print(
+        f" - adding {image_path} with resolution {original_w}x{original_h} --> {resized_w}x{resized_h}"
+    )
+    return img

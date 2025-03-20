@@ -15,7 +15,11 @@ import rerun.blueprint as rrb
 from pathlib import Path
 import tempfile
 
-from mini_dust3r.api import OptimizedResult, inferece_dust3r, log_optimized_result
+from mini_dust3r.api import (
+    OptimizedResult,
+    inferece_dust3r_from_paths,
+    log_optimized_result,
+)
 from mini_dust3r.model import AsymmetricCroCo3DStereo
 
 from pillow_heif import register_heif_opener  # noqa
@@ -82,8 +86,14 @@ def predict(
     if isinstance(image_name_list, str):
         image_name_list = [image_name_list]
 
-    optimized_results: OptimizedResult = inferece_dust3r(
-        image_dir_or_list=image_name_list,
+    # Extract the parent directory of the images
+    if isinstance(image_name_list, str):
+        image_name_list = [image_name_list]
+
+    image_path_list: list[Path] = [Path(image) for image in image_name_list]
+
+    optimized_results: OptimizedResult = inferece_dust3r_from_paths(
+        image_dir_or_list=image_path_list,
         model=model,
         device=DEVICE,
         batch_size=1,
