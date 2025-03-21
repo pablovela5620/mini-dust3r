@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mini-dust3r"
-version = "0.1.3"
+version = "0.1.4"
 description = "Miniature version of dust3r, focused on inference"
 requires-python = ">=3.10.0"
 license = { file = "LICENSE" }
