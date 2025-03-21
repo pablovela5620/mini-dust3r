@@ -28,9 +28,7 @@ register_heif_opener()  # noqa
 
 if gr.NO_RELOAD:
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-    model = AsymmetricCroCo3DStereo.from_pretrained(
-        "nielsr/DUSt3R_ViTLarge_BaseDecoder_512_dpt"
-    ).to(DEVICE)
+    model = AsymmetricCroCo3DStereo.from_pretrained("pablovela5620/dust3r").to(DEVICE)
 
 
 def create_blueprint(image_name_list: list[str], log_path: Path) -> rrb.Blueprint:

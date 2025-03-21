@@ -4,18 +4,18 @@
 # --------------------------------------------------------
 # utilitary functions about images (loading/converting...)
 # --------------------------------------------------------
-import os
-from PIL.ImageFile import ImageFile
-import torch
+from pathlib import Path
+from typing import Literal, TypedDict
+
+import cv2
 import numpy as np
 import PIL.Image
-from PIL.ImageOps import exif_transpose
+import torch
 import torchvision.transforms as tvf
-
-from typing import Literal, TypedDict
+from einops import rearrange
 from jaxtyping import Float32, Int32
-from pathlib import Path
-import cv2
+from PIL.ImageOps import exif_transpose
+from tqdm import tqdm
 
 try:
     from pillow_heif import register_heif_opener  # noqa
@@ -54,22 +54,9 @@ def rgb(ftensor, true_shape=None):
     return img.clip(min=0, max=1)
 
 
-def _resize_pil_image(img: PIL.Image.Image, long_edge_size: int) -> PIL.Image.Image:
-    max_edge_size = max(img.size)
-    if max_edge_size > long_edge_size:
-        interp = PIL.Image.LANCZOS
-    elif max_edge_size <= long_edge_size:
-        interp = PIL.Image.BICUBIC
-    new_size = tuple(int(round(x * long_edge_size / max_edge_size)) for x in img.size)
-    return img.resize(new_size, interp)
-
-
-def load_images(
+def load_images_from_dir_or_list(
     image_dir_or_list: list[Path] | Path,
-    size: Literal[224, 512],
-    square_ok: bool = False,
-    verbose: bool = True,
-) -> list[ImageDict]:
+) -> list[np.ndarray]:
     """open and convert all images in a list or folder to proper input format for DUSt3R"""
     supported_images_extensions: list[str] = [".jpg", ".jpeg", ".png"]
     if heif_support_enabled:
@@ -77,115 +64,139 @@ def load_images(
     supported_images_extensions = tuple(supported_images_extensions)
     # get a list of paths of all images in supported_images_extensions
     if isinstance(image_dir_or_list, list):
-        path_iter: list[Path] = image_dir_or_list
+        paths_list: list[Path] = image_dir_or_list
     else:
-        path_iter: list[Path] = list(image_dir_or_list.iterdir())
+        paths_list: list[Path] = list(image_dir_or_list.iterdir())
+
+    # filter paths_list
+    paths_list = (
+        path
+        for path in paths_list
+        if path.is_file() and path.suffix.lower() in supported_images_extensions
+    )
+    return [read_image_path(path) for path in paths_list]
+
+
+def load_and_preprocess_images(
+    image_dir_or_list: list[Path] | Path,
+    size: Literal[224, 512],
+    square_ok: bool = False,
+) -> list[ImageDict]:
+    """open and convert all images in a list or folder to proper input format for DUSt3R"""
+    rgb_list: list[np.ndarray] = load_images_from_dir_or_list(image_dir_or_list)
 
     imgs: list[ImageDict] = []
-    for path in path_iter:
-        if not path.is_file() or path.suffix.lower() not in supported_images_extensions:
-            continue
-        img: PIL.Image.Image = resize_and_crop_pil(
-            image_path=path, size=size, square_ok=square_ok
+    for idx, rgb_img in enumerate(tqdm(rgb_list, desc="Processing images")):
+        # Read the image and get its original dimensions.
+        preprocessed_img: Float32[torch.Tensor, "3 H W"] = preprocess_rgb(
+            rgb_img, size, square_ok
         )
         imgs.append(
-            dict(
-                img=ImgNorm(img)[None],
-                true_shape=np.int32([img.size[::-1]]),
-                idx=len(imgs),
-                instance=str(len(imgs)),
+            ImageDict(
+                img=rearrange(preprocessed_img, "c h w -> 1 c h w"),
+                true_shape=np.int32(
+                    [[preprocessed_img.shape[1], preprocessed_img.shape[2]]]
+                ),
+                idx=idx,
+                instance=str(idx),
             )
         )
-        # img = resize_and_crop_cv2(image_path=path, size=size, square_ok=square_ok)
-        # H, W = img.shape[:2]
-        # imgs.append(
-        #     dict(
-        #         img=ImgNorm(img)[None],
-        #         true_shape=np.int32([[H, W]]),
-        #         idx=len(imgs),
-        #         instance=str(len(imgs)),
-        #     )
-        # )
 
     assert imgs, f"no images found in {image_dir_or_list}"
-    if verbose:
-        print(f" (Found {len(imgs)} images)")
     return imgs
 
 
-def resize_and_crop_pil(
-    image_path: Path, size: Literal[224, 512], square_ok: bool = False
-) -> PIL.Image.Image:
-    assert image_path.exists(), f"bad {image_path=}"
-    img_pil_path: ImageFile = PIL.Image.open(image_path)
-    img: PIL.Image.Image = exif_transpose(img_pil_path).convert("RGB")
-    original_w, original_h = img.size
-    ## First Resize
-    if size == 224:
-        # resize short side to 224 (then crop)
-        size_ratio: float = max(original_w / size, original_h / size)
-        long_edge_size: int = round(size * size_ratio)
-        img = _resize_pil_image(img, long_edge_size)
-    elif size == 512:
-        # resize long side to 512
-        img = _resize_pil_image(img, size)
+def preprocess_rgb(
+    rgb_img: np.ndarray, size: Literal[224, 512], square_ok: bool = False
+) -> Float32[torch.Tensor, "3 H W"]:
+    """Preprocess a single image for DUSt3R.
 
-    ## Then Crop
-    W, H = img.size
-    cx, cy = W // 2, H // 2
-    if size == 224:
-        half: int = min(cx, cy)
-        img = img.crop((cx - half, cy - half, cx + half, cy + half))
-    else:
-        halfw, halfh = ((2 * cx) // 16) * 8, ((2 * cy) // 16) * 8
-        if not (square_ok) and W == H:
-            halfh = 3 * halfw / 4
-        img = img.crop((cx - halfw, cy - halfh, cx + halfw, cy + halfh))
+    Args:
+        rgb_img: Image in RGB format
+        size: Target size for the longer edge
+        square_ok: If False and the image is square (with size 512), a 3:4 crop is applied
 
-    resized_w, resized_h = img.size
-    print(
-        f" - adding {image_path} with resolution {original_w}x{original_h} --> {resized_w}x{resized_h}"
-    )
-    return img
+    Returns:
+        ImageDict: Preprocessed image
+    """
+    resized_img = resize_and_crop_cv2(rgb_img, size, square_ok)
+    img_tensor = ImgNorm(resized_img)
+    return img_tensor
+
+
+def read_image_path(image_path: Path) -> np.ndarray:
+    """Read an image file to a numpy array in RGB format.
+
+    Args:
+        image_path: Path to the image file
+
+    Returns:
+        Numpy array containing the image in RGB format
+    """
+    assert image_path.exists(), f"Image path does not exist: {image_path}"
+    img_pil = PIL.Image.open(image_path)
+    img_pil = exif_transpose(img_pil).convert("RGB")
+    return np.array(img_pil)
 
 
 def resize_and_crop_cv2(
-    image_path: Path, size: Literal[224, 512], square_ok: bool = False
+    rgb_img: np.ndarray, size: Literal[224, 512], square_ok: bool = False
 ) -> np.ndarray:
-    assert image_path.exists(), f"bad {image_path=}"
-    img_bgr = cv2.imread(str(image_path))
-    assert img_bgr is not None, f"Failed to load {image_path}"
-    img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+    """
+    Resize and crop an image from the given path.
 
-    original_h, original_w = img.shape[:2]
+    The image is first resized based on the target size:
+      - For size 224, the scaling factor is determined by the maximum ratio of the original width or height to 224.
+      - For size 512, the image is scaled so that its longest edge becomes 512.
 
-    # First Resize
+    After resizing, the image is center-cropped:
+      - For size 224, a square crop is performed.
+      - For size 512, if square_ok is False and the image is square, the crop uses a 3:4 aspect ratio.
+
+    Parameters:
+        image_path (Path): Path to the image file.
+        size (Literal[224, 512]): Target size for the longer edge.
+        square_ok (bool): If False and the image is square (with size 512), a 3:4 crop is applied.
+
+    Returns:
+        np.ndarray: The resized and cropped image.
+    """
+    original_height, original_width = rgb_img.shape[:2]
+
+    # Determine the scaling factor.
     if size == 224:
-        size_ratio = max(original_w / size, original_h / size)
-        long_edge_size = round(size * size_ratio)
-        scale = long_edge_size / max(original_w, original_h)
+        size_ratio = max(original_width / size, original_height / size)
+        target_long_edge = round(size * size_ratio)
+        scale = target_long_edge / max(original_width, original_height)
     elif size == 512:
-        scale = size / max(original_w, original_h)
+        scale = size / max(original_width, original_height)
+    else:
+        raise ValueError("size must be either 224 or 512")
 
-    new_w, new_h = int(round(original_w * scale)), int(round(original_h * scale))
-    interp = cv2.INTER_LANCZOS4 if scale < 1 else cv2.INTER_CUBIC
-    img = cv2.resize(img, (new_w, new_h), interpolation=interp)
+    new_width = int(round(original_width * scale))
+    new_height = int(round(original_height * scale))
+    interpolation = cv2.INTER_LANCZOS4 if scale < 1 else cv2.INTER_CUBIC
+    resized_img = cv2.resize(
+        rgb_img, (new_width, new_height), interpolation=interpolation
+    )
 
-    # Then Crop
-    H, W = img.shape[:2]
-    cx, cy = W // 2, H // 2
+    # Center crop the resized image.
+    height, width = resized_img.shape[:2]
+    center_x, center_y = width // 2, height // 2
 
     if size == 224:
-        half = min(cx, cy)
-        img = img[cy - half : cy + half, cx - half : cx + half]
+        half_crop = min(center_x, center_y)
+        cropped_img = resized_img[
+            center_y - half_crop : center_y + half_crop,
+            center_x - half_crop : center_x + half_crop,
+        ]
     else:
-        halfw, halfh = ((2 * cx) // 16) * 8, ((2 * cy) // 16) * 8
-        if not square_ok and W == H:
-            halfh = int(3 * halfw / 4)
-        img = img[cy - halfh : cy + halfh, cx - halfw : cx + halfw]
-
-    resized_h, resized_w = img.shape[:2]
-    print(
-        f" - adding {image_path} with resolution {original_w}x{original_h} --> {resized_w}x{resized_h}"
-    )
-    return img
+        half_width = ((2 * center_x) // 16) * 8
+        half_height = ((2 * center_y) // 16) * 8
+        if not square_ok and width == height:
+            half_height = int(3 * half_width / 4)
+        cropped_img = resized_img[
+            center_y - half_height : center_y + half_height,
+            center_x - half_width : center_x + half_width,
+        ]
+    return cropped_img
