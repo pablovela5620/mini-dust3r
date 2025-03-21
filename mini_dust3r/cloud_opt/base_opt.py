@@ -5,32 +5,31 @@
 # Base class for the global alignement procedure
 # --------------------------------------------------------
 from copy import deepcopy
+from typing import Literal
 
 import numpy as np
+import roma
 import torch
 import torch.nn as nn
-import roma
-from copy import deepcopy
 import tqdm
 
-from mini_dust3r.utils.geometry import inv, geotrf
-from mini_dust3r.utils.device import to_numpy
-from mini_dust3r.utils.image import rgb
-from mini_dust3r.viz import SceneViz, segment_sky, auto_cam_size
-from mini_dust3r.optim_factory import adjust_learning_rate_by_lr
-
+import mini_dust3r.cloud_opt.init_im_poses as init_fun
 from mini_dust3r.cloud_opt.commons import (
-    edge_str,
     ALL_DISTS,
     NoGradParamDict,
+    cosine_schedule,
+    edge_str,
+    get_conf_trf,
     get_imshapes,
+    linear_schedule,
     signed_expm1,
     signed_log1p,
-    cosine_schedule,
-    linear_schedule,
-    get_conf_trf,
 )
-import mini_dust3r.cloud_opt.init_im_poses as init_fun
+from mini_dust3r.optim_factory import adjust_learning_rate_by_lr
+from mini_dust3r.utils.device import to_numpy
+from mini_dust3r.utils.geometry import geotrf, inv
+from mini_dust3r.utils.image import rgb
+from mini_dust3r.viz import SceneViz, auto_cam_size, segment_sky
 
 
 class BasePCOptimizer(nn.Module):
@@ -339,8 +338,13 @@ class BasePCOptimizer(nn.Module):
             return loss, details
         return loss
 
-    @torch.cuda.amp.autocast(enabled=False)
-    def compute_global_alignment(self, init=None, niter_PnP=10, **kw):
+    @torch.amp.autocast("cuda", enabled=False)
+    def compute_global_alignment(
+        self,
+        init: Literal[None, "msp", "mst", "known_poses"] = None,
+        niter_PnP=10,
+        **kw,
+    ):
         if init is None:
             pass
         elif init == "msp" or init == "mst":

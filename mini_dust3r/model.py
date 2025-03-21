@@ -4,30 +4,31 @@
 # --------------------------------------------------------
 # DUSt3R model class
 # --------------------------------------------------------
-from copy import deepcopy
-import torch
 import os
-from packaging import version
-import huggingface_hub
+from copy import deepcopy
 
+import huggingface_hub
+import torch
+from packaging import version
+
+from mini_dust3r.croco.croco import CroCoNet
+from mini_dust3r.patch_embed import get_patch_embed
+
+from .heads import head_factory
 from .utils.misc import (
     fill_default_args,
     freeze_all_params,
-    is_symmetrized,
     interleave,
+    is_symmetrized,
     transpose_to_landscape,
 )
-from .heads import head_factory
-from mini_dust3r.patch_embed import get_patch_embed
-
-from mini_dust3r.croco.croco import CroCoNet
 
 inf = float("inf")
 
 hf_version_number = huggingface_hub.__version__
-assert version.parse(hf_version_number) >= version.parse(
-    "0.22.0"
-), "Outdated huggingface_hub version, please reinstall requirements.txt"
+assert version.parse(hf_version_number) >= version.parse("0.22.0"), (
+    "Outdated huggingface_hub version, please reinstall requirements.txt"
+)
 
 
 def load_model(model_path, device, verbose=True):
@@ -137,9 +138,9 @@ class AsymmetricCroCo3DStereo(
         img_size,
         **kw,
     ):
-        assert (
-            img_size[0] % patch_size == 0 and img_size[1] % patch_size == 0
-        ), f"{img_size=} must be multiple of {patch_size=}"
+        assert img_size[0] % patch_size == 0 and img_size[1] % patch_size == 0, (
+            f"{img_size=} must be multiple of {patch_size=}"
+        )
         self.output_mode = output_mode
         self.head_type = head_type
         self.depth_mode = depth_mode
@@ -249,7 +250,7 @@ class AsymmetricCroCo3DStereo(
         # combine all ref images into object-centric representation
         dec1, dec2 = self._decoder(feat1, pos1, feat2, pos2)
 
-        with torch.cuda.amp.autocast(enabled=False):
+        with torch.amp.autocast("cuda", enabled=False):
             res1 = self._downstream_head(1, [tok.float() for tok in dec1], shape1)
             res2 = self._downstream_head(2, [tok.float() for tok in dec2], shape2)
 
