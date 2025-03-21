@@ -6,62 +6,33 @@ except ImportError:
     print("Not running on Zero")
     IN_SPACES = False
 
-import gradio as gr
 import os
-import torch
-from gradio_rerun import Rerun
+import tempfile
+from pathlib import Path
+
+import gradio as gr
+import numpy as np
 import rerun as rr
 import rerun.blueprint as rrb
-from pathlib import Path
-import tempfile
+import torch
+from gradio_rerun import Rerun
+from jaxtyping import UInt8
+from pillow_heif import register_heif_opener  # noqa
 
 from mini_dust3r.api import (
     OptimizedResult,
-    inferece_dust3r_from_paths,
+    inferece_dust3r_from_rgb,
     log_optimized_result,
 )
 from mini_dust3r.model import AsymmetricCroCo3DStereo
-
-from pillow_heif import register_heif_opener  # noqa
+from mini_dust3r.rerun_log_utils import create_blueprint
+from mini_dust3r.utils.image import load_images_from_dir_or_list
 
 register_heif_opener()  # noqa
 
 if gr.NO_RELOAD:
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     model = AsymmetricCroCo3DStereo.from_pretrained("pablovela5620/dust3r").to(DEVICE)
-
-
-def create_blueprint(image_name_list: list[str], log_path: Path) -> rrb.Blueprint:
-    # dont show 2d views if there are more than 4 images as to not clutter the view
-    if len(image_name_list) > 4:
-        blueprint = rrb.Blueprint(
-            rrb.Horizontal(
-                rrb.Spatial3DView(origin=f"{log_path}"),
-            ),
-            collapse_panels=True,
-        )
-    else:
-        blueprint = rrb.Blueprint(
-            rrb.Horizontal(
-                contents=[
-                    rrb.Spatial3DView(origin=f"{log_path}"),
-                    rrb.Vertical(
-                        contents=[
-                            rrb.Spatial2DView(
-                                origin=f"{log_path}/camera_{i}/pinhole/",
-                                contents=[
-                                    "+ $origin/**",
-                                ],
-                            )
-                            for i in range(len(image_name_list))
-                        ]
-                    ),
-                ],
-                column_shares=[3, 1],
-            ),
-            collapse_panels=True,
-        )
-    return blueprint
 
 
 @rr.thread_local_stream("dust3r_rrd")
@@ -79,7 +50,7 @@ def predict(
     temp = tempfile.NamedTemporaryFile(prefix="dust3r_", suffix=".rrd", delete=False)
     pending_cleanup.append(temp.name)
 
-    log_path = Path("world")
+    parent_log_path = Path("world")
 
     if isinstance(image_name_list, str):
         image_name_list = [image_name_list]
@@ -89,19 +60,22 @@ def predict(
         image_name_list = [image_name_list]
 
     image_path_list: list[Path] = [Path(image) for image in image_name_list]
+    rgb_list: list[UInt8[np.ndarray, "H W 3"]] = load_images_from_dir_or_list(
+        image_path_list
+    )
 
-    optimized_results: OptimizedResult = inferece_dust3r_from_paths(
-        image_dir_or_list=image_path_list,
+    optimized_results: OptimizedResult = inferece_dust3r_from_rgb(
+        rgb_list=rgb_list,
         model=model,
         device=DEVICE,
         batch_size=1,
     )
 
-    blueprint: rrb.Blueprint = create_blueprint(image_name_list, log_path)
+    blueprint: rrb.Blueprint = create_blueprint(image_path_list, parent_log_path)
     rr.send_blueprint(blueprint)
 
     rr.set_time_sequence("sequence", 0)
-    log_optimized_result(optimized_results, log_path, jpeg_quality=80)
+    log_optimized_result(optimized_results, parent_log_path, jpeg_quality=80)
     rr.save(temp.name, default_blueprint=blueprint)
     return temp.name
 

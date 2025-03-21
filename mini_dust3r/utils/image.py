@@ -13,7 +13,7 @@ import PIL.Image
 import torch
 import torchvision.transforms as tvf
 from einops import rearrange
-from jaxtyping import Float32, Int32
+from jaxtyping import Float32, Int32, UInt8
 from PIL.ImageOps import exif_transpose
 from tqdm import tqdm
 
@@ -56,7 +56,7 @@ def rgb(ftensor, true_shape=None):
 
 def load_images_from_dir_or_list(
     image_dir_or_list: list[Path] | Path,
-) -> list[np.ndarray]:
+) -> list[UInt8[np.ndarray, "H W 3"]]:
     """open and convert all images in a list or folder to proper input format for DUSt3R"""
     supported_images_extensions: list[str] = [".jpg", ".jpeg", ".png"]
     if heif_support_enabled:
