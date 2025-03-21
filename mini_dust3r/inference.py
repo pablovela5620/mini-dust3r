@@ -67,11 +67,11 @@ def loss_of_one_batch(
     if symmetrize_batch:
         view1, view2 = make_batch_symmetric(batch)
 
-    with torch.cuda.amp.autocast(enabled=bool(use_amp)):
+    with torch.amp.autocast("cuda", enabled=bool(use_amp)):
         pred1, pred2 = model(view1, view2)
 
         # loss is supposed to be symmetric
-        with torch.cuda.amp.autocast(enabled=False):
+        with torch.amp.autocast("cuda", enabled=False):
             loss = (
                 criterion(view1, view2, pred1, pred2) if criterion is not None else None
             )
@@ -93,7 +93,7 @@ def inference(
     result = []
 
     # first, check if all images have the same size
-    multiple_shapes = not (check_if_same_size(pairs))
+    multiple_shapes: bool = not (check_if_same_size(pairs))
     if multiple_shapes:  # force bs=1
         batch_size = 1
 
